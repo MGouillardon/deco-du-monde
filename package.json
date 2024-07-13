@@ -44,6 +44,7 @@
     "@types/node": "^20.14.5",
     "@vitejs/plugin-vue": "^5.0.5",
     "autoprefixer": "^10.4.19",
+    "daisyui": "^4.12.10",
     "eslint": "^8.57.0",
     "hot-hook": "^0.2.6",
     "pino-pretty": "^11.2.1",
