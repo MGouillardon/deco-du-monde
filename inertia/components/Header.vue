@@ -1,6 +1,8 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
+import UserIcon from '../components/icons/UserIcon.vue'
+import LogoutIcon from '../components/icons/LogoutIcon.vue'
 
 const props = defineProps({
   user: String,
@@ -22,7 +24,11 @@ const userInitial = computed(() => {
     </div>
     <div class="flex-none gap-2">
       <div class="form-control">
-        <input type="text" placeholder="Search" class="input input-bordered input-sm w-24 md:w-auto" />
+        <input
+          type="text"
+          placeholder="Search"
+          class="input input-bordered input-sm w-24 md:w-auto"
+        />
       </div>
       <div class="dropdown dropdown-end">
         <div tabindex="0" role="button" class="btn btn-primary btn-circle">
@@ -34,8 +40,12 @@ const userInitial = computed(() => {
           tabindex="0"
           class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
         >
-          <li><a>Profile</a></li>
-          <li><a>Logout</a></li>
+          <li>
+            <a><UserIcon />Profile</a>
+          </li>
+          <li>
+            <a><LogoutIcon />Logout</a>
+          </li>
         </ul>
       </div>
     </div>
