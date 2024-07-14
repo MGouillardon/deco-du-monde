@@ -1,18 +1,17 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import User from '#models/user'
-import Role from '#models/role'
+import Roles from '#enums/roles'
 
 export default class AdminSeeder extends BaseSeeder {
   async run() {
-    const adminRole = await Role.findBy('name', 'admin')
-
-    if (adminRole) {
-      await User.create({
+    await User.updateOrCreate(
+      { email: 'admin@example.com' },
+      {
         fullName: 'Admin User',
         email: 'admin@example.com',
         password: 'password',
-        roleId: adminRole.id,
-      })
-    }
+        roleId: Roles.ADMIN,
+      }
+    )
   }
 }
