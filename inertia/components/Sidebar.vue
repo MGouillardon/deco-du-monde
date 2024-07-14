@@ -1,6 +1,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import HomeIcon from '@/components/icons/HomeIcon.vue'
+import UsersIcon from '@/components/icons/UsersIcon.vue'
 import CalendarIcon from '@/components/icons/CalendarIcon.vue'
 import CameraIcon from '@/components/icons/CameraIcon.vue'
 import SettingsIcon from '@/components/icons/SettingsIcon.vue'
@@ -21,6 +22,9 @@ import DataIcon from '@/components/icons/DataIcon.vue'
           <Link href="/admin/dashboard" :class="{ active: $page.url === '/admin/dashboard' }">
             <HomeIcon />Dashboard
           </Link>
+        </li>
+        <li>
+          <Link><UsersIcon />Users</Link>
         </li>
         <li>
           <a><CalendarIcon />Calendar</a>
