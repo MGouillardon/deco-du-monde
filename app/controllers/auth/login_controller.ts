@@ -15,7 +15,7 @@ export default class LoginController {
       await auth.use('web').login(user)
 
       session.flash('success', 'You have been logged in successfully!')
-      return response.redirect().toRoute('inertia')
+      return response.redirect().toRoute('dashboard')
     } catch (error) {
       this.handleLoginError(error, session)
       return response.redirect().back()
