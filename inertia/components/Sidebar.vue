@@ -1,6 +1,10 @@
 <script setup>
-import HomeIcon from '@/components/icons/HomeIcon.vue'
 import { Link } from '@inertiajs/vue3'
+import HomeIcon from '@/components/icons/HomeIcon.vue'
+import CalendarIcon from '@/components/icons/CalendarIcon.vue'
+import CameraIcon from '@/components/icons/CameraIcon.vue'
+import SettingsIcon from '@/components/icons/SettingsIcon.vue'
+import DataIcon from '@/components/icons/DataIcon.vue'
 </script>
 
 <template>
@@ -14,12 +18,16 @@ import { Link } from '@inertiajs/vue3'
       </header>
       <ul class="menu bg-base-100 p-4 md:p-6 lg:p-8 gap-4">
         <li>
-          <Link href="/admin/dashboard" :class="{ active: $page.url === '/admin/dashboard' }"> <HomeIcon />Dashboard </Link>
+          <Link href="/admin/dashboard" :class="{ active: $page.url === '/admin/dashboard' }">
+            <HomeIcon />Dashboard
+          </Link>
         </li>
-        <li><a>Calendar</a></li>
+        <li>
+          <a><CalendarIcon />Calendar</a>
+        </li>
         <li>
           <details open>
-            <summary>Work</summary>
+            <summary><CameraIcon />Work</summary>
             <ul>
               <li><a>Sets</a></li>
               <li><a>Items</a></li>
@@ -28,7 +36,7 @@ import { Link } from '@inertiajs/vue3'
         </li>
         <li>
           <details>
-            <summary>Reports</summary>
+            <summary><DataIcon />Reports</summary>
             <ul>
               <li><a>History</a></li>
               <li><a>Analysis</a></li>
@@ -37,7 +45,7 @@ import { Link } from '@inertiajs/vue3'
         </li>
         <li>
           <details>
-            <summary>Settings</summary>
+            <summary><SettingsIcon />Settings</summary>
             <ul>
               <li><a>Profile</a></li>
               <li><a>Logout</a></li>
