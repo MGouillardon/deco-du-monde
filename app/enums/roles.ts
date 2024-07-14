@@ -1,0 +1,10 @@
+enum Roles {
+  ADMIN = 1,
+  PHOTOGRAPHE = 2,
+  ASSISTANT_PHOTOGRAPHE = 3,
+  DECORATEUR = 4,
+  ASSISTANT_DECORATEUR = 5,
+  CHAUFFEUR_ASSISTANT = 6,
+}
+
+export default Roles
