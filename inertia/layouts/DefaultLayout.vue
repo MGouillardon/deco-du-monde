@@ -11,7 +11,9 @@ const user = computed(() => page.props.auth?.fullName)
 
 <template>
   <Header v-if="user" :user="user" />
-  <slot></slot>
+  <main class="mx-auto h-full w-full p-4 md:p-6 lg:p-8 max-w-7xl">
+    <slot></slot>
+  </main>
   <FlashMessage v-if="flash" :flash="flash" :key="flash" />
 </template>
 
