@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import UserIcon from '@/components/icons/UserIcon.vue'
 import LogoutIcon from '@/components/icons/LogoutIcon.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
+import BurgerMenuIcon from '@/components/icons/BurgerMenuIcon.vue'
 
 const props = defineProps({
   user: String,
@@ -19,9 +20,11 @@ const userInitial = computed(() => {
 </script>
 
 <template>
-  <header class="navbar bg-base-100 border-2 border-b-base-200 px-4 md:px-6 lg:px-8">
+  <header class="navbar bg-base-100 border-b-2 border-b-base-200 px-4 md:px-6 lg:px-8">
     <div class="flex-1">
-      <a class="btn btn-ghost text-xl">Déco du monde</a>
+      <label for="my-drawer-2" class="drawer-button lg:hidden">
+        <BurgerMenuIcon />
+      </label>
     </div>
     <div class="flex-none gap-4">
       <div class="form-control">
