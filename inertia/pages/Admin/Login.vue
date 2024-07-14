@@ -1,8 +1,8 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3'
-import EmailIcon from '../../components/icons/EmailIcon.vue'
-import PasswordIcon from '../../components/icons/PwdIcon.vue'
-import ErrorFieldMessage from '../../components/Messages/ErrorFieldMessage.vue'
+import EmailIcon from '@/components/icons/EmailIcon.vue'
+import PasswordIcon from '@/components/icons/PwdIcon.vue'
+import ErrorFieldMessage from '@/components/Messages/ErrorFieldMessage.vue'
 
 const props = defineProps({
   success: String,

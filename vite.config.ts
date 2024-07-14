@@ -5,7 +5,11 @@ import vue from '@vitejs/plugin-vue'
 import adonisjs from '@adonisjs/vite/client'
 
 export default defineConfig({
-  plugins: [inertia({ ssr: { enabled: false } }), vue(), adonisjs({ entrypoints: ['inertia/app/app.ts'], reload: ['resources/views/**/*.edge'] })],
+  plugins: [
+    inertia({ ssr: { enabled: false } }),
+    vue(),
+    adonisjs({ entrypoints: ['inertia/app/app.ts'], reload: ['resources/views/**/*.edge'] }),
+  ],
 
   /**
    * Define aliases for importing modules from
@@ -13,7 +17,7 @@ export default defineConfig({
    */
   resolve: {
     alias: {
-      '~/': `${getDirname(import.meta.url)}/inertia/`,
+      '@/': `${getDirname(import.meta.url)}/inertia/`,
     },
   },
 })

@@ -1,6 +1,6 @@
 <script setup>
 import Header from '../components/Header.vue'
-import FlashMessage from '../components/Messages/FlashMessage.vue'
+import FlashMessage from '@/components/Messages/FlashMessage.vue'
 import { usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'
 

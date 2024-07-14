@@ -1,8 +1,8 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
-import UserIcon from '../components/icons/UserIcon.vue'
-import LogoutIcon from '../components/icons/LogoutIcon.vue'
+import UserIcon from '@/components/icons/UserIcon.vue'
+import LogoutIcon from '@/components/icons/LogoutIcon.vue'
 
 const props = defineProps({
   user: String,
