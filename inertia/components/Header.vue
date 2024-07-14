@@ -44,7 +44,9 @@ const userInitial = computed(() => {
             <a><UserIcon />Profile</a>
           </li>
           <li>
-            <a><LogoutIcon />Logout</a>
+            <Link href="/admin/logout" method="delete" as="button" type="button"
+              ><LogoutIcon />Logout</Link
+            >
           </li>
         </ul>
       </div>
