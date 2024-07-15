@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, belongsTo, column, scope } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column, computed, scope } from '@adonisjs/lucid/orm'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Role from '#models/role'
@@ -37,7 +37,21 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 
+  @computed()
+  get roleName() {
+    return this.role?.name
+  }
+
   static nonAdmin = scope((query) => {
     query.where('role_id', '!=', Roles.ADMIN)
   })
+
+  serialize() {
+    return {
+      id: this.id,
+      fullName: this.fullName,
+      email: this.email,
+      roleName: this.roleName,
+    }
+  }
 }
