@@ -14,9 +14,6 @@ import DataIcon from '@/components/icons/DataIcon.vue'
     <div
       class="menu bg-base-100 border-r-2 border-r-bg-base-200 text-base-content min-h-full w-80 p-0"
     >
-      <header class="navbar bg-base-100 border-b-2 border-b-base-200 pb-[2px] px-4 md:px-6 lg:px-8">
-        <a class="btn btn-ghost text-xl">daisyUI</a>
-      </header>
       <ul class="menu bg-base-100 p-4 md:p-6 lg:p-8 gap-4">
         <li>
           <Link href="/admin/dashboard" :class="{ active: $page.url === '/admin/dashboard' }">
@@ -30,7 +27,7 @@ import DataIcon from '@/components/icons/DataIcon.vue'
           <a><CalendarIcon />Calendar</a>
         </li>
         <li>
-          <details open>
+          <details>
             <summary><CameraIcon />Work</summary>
             <ul>
               <li><a>Sets</a></li>
