@@ -12,7 +12,8 @@ import { middleware } from './kernel.js'
 const LogoutController = () => import('#controllers/auth/logout_controller')
 const RenderController = () => import('#controllers/admin/dashboard/render_controller')
 const LoginController = () => import('#controllers/auth/login_controller')
-router.on('/').renderInertia('home', { version: 6 })
+
+router.on('/').redirect('/admin/dashboard')
 
 router
   .group(() => {
