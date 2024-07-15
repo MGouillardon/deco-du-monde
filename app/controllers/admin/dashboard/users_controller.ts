@@ -1,10 +1,14 @@
+import User from '#models/user'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class UsersController {
   /**
    * Display a list of resource
    */
-  async index({}: HttpContext) {}
+  async index({ inertia }: HttpContext) {
+    const users = await User.all()
+    return inertia.render('Admin/Dashboard/Users/Listing', { users })
+  }
 
   /**
    * Display form to create a new record
