@@ -8,11 +8,15 @@ export default class UsersController {
   /**
    * Display a list of resource
    */
-  async index({ inertia }: HttpContext) {
+  async index({ request, inertia }: HttpContext) {
     const title = 'Listing'
+    const page = request.input('page', 1)
+    const limit = 10
+
     const users = await User.query()
       .withScopes((scopes) => scopes.nonAdmin())
       .preload('role')
+      .paginate(page, limit)
 
     return inertia.render('Admin/Dashboard/Users/Listing', { users, title })
   }
