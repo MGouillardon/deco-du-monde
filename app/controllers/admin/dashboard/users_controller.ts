@@ -2,12 +2,10 @@ import Roles from '#enums/roles'
 import Role from '#models/role'
 import User from '#models/user'
 import { storeUserValidator } from '#validators/dashboard/users/store'
+import { updateUserValidator } from '#validators/dashboard/users/update'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class UsersController {
-  /**
-   * Display a list of resource
-   */
   async index({ request, inertia }: HttpContext) {
     const title = 'Listing'
     const page = request.input('page', 1)
@@ -21,9 +19,6 @@ export default class UsersController {
     return inertia.render('Admin/Dashboard/Users/Listing', { users, title })
   }
 
-  /**
-   * Display form to create a new record
-   */
   async create({ inertia }: HttpContext) {
     const title = 'Create User'
     const roles = await Role.query().whereNot('id', Roles.ADMIN).orderBy('id', 'desc')
@@ -38,9 +33,6 @@ export default class UsersController {
     })
   }
 
-  /**
-   * Handle form submission for the create action
-   */
   async store({ request, session, response }: HttpContext) {
     const { fullName, email, password, roleId } = await request.validateUsing(storeUserValidator)
     await User.create({ fullName, email, password, roleId })
@@ -48,23 +40,42 @@ export default class UsersController {
     return response.redirect().toRoute('listing.user')
   }
 
-  /**
-   * Show individual record
-   */
   async show({ params }: HttpContext) {}
 
-  /**
-   * Edit individual record
-   */
-  async edit({ params }: HttpContext) {}
+  async edit({ inertia, params }: HttpContext) {
+    const title = 'Edit User'
+    const user = await User.query().where('id', params.id).preload('role').firstOrFail()
+    const roles = await Role.query().whereNot('id', Roles.ADMIN).orderBy('id', 'desc')
 
-  /**
-   * Handle form submission for the edit action
-   */
-  async update({ params, request }: HttpContext) {}
+    return inertia.render('Admin/Dashboard/Users/Edit', {
+      title,
+      user: {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        roleId: user.role.id,
+      },
+      roles: roles.map((role) => ({
+        id: role.id,
+        name: role.displayName,
+        value: role.name,
+      })),
+    })
+  }
 
-  /**
-   * Delete record
-   */
+  async update({ params, request, response, session }: HttpContext) {
+    const { fullName, email, password, roleId } = await request.validateUsing(updateUserValidator)
+    const user = await User.findOrFail(params.id)
+    user.fullName = fullName
+    user.email = email
+    user.roleId = roleId
+    if (password) {
+      user.password = password
+    }
+    await user.save()
+    session.flash('success', 'User updated successfully')
+    return response.redirect().toRoute('listing.user')
+  }
+
   async destroy({ params }: HttpContext) {}
 }
