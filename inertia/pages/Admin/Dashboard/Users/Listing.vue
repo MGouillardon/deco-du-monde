@@ -1,4 +1,5 @@
 <script setup>
+import { Link } from '@inertiajs/vue3'
 const props = defineProps({
   users: {
     type: Array,
@@ -8,6 +9,9 @@ const props = defineProps({
 </script>
 
 <template>
+  <div class="flex justify-end mb-4">
+    <Link class="btn btn-primary btn-sm" href="/admin/dashboard/users/create">Create a User</Link>
+  </div>
   <div class="card bg-base-100 shadow-xl">
     <div class="overflow-x-auto">
       <table class="table">
