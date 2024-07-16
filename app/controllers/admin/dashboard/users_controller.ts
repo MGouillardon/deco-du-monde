@@ -1,6 +1,7 @@
 import Roles from '#enums/roles'
 import Role from '#models/role'
 import User from '#models/user'
+import { storeUserValidator } from '#validators/dashboard/users/store'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class UsersController {
@@ -36,7 +37,12 @@ export default class UsersController {
   /**
    * Handle form submission for the create action
    */
-  async store({ request }: HttpContext) {}
+  async store({ request, session, response }: HttpContext) {
+    const { fullName, email, password, roleId } = await request.validateUsing(storeUserValidator)
+    await User.create({ fullName, email, password, roleId })
+    session.flash('success', 'User created successfully')
+    return response.redirect().toRoute('listing.user')
+  }
 
   /**
    * Show individual record
