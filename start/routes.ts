@@ -36,6 +36,7 @@ router
   .group(() => {
     router.get('/listing', [UsersController, 'index']).as('listing.user')
     router.get('/create', [UsersController, 'create']).as('create.user')
+    router.post('/store', [UsersController, 'store']).as('store.user')
   })
   .prefix('admin/dashboard/users')
   .use(middleware.auth())
