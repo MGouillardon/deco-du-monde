@@ -1,15 +1,21 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
+import Pagination from '@/components/UI/Pagination.vue'
+
 const props = defineProps({
   users: {
-    type: Array,
+    type: Object,
     required: true,
   },
 })
 </script>
 
 <template>
-  <div class="flex justify-end mb-4">
+  <div class="flex justify-between items-center mb-4">
+    <Pagination
+      :current-page="props.users.meta.currentPage"
+      :last-page="props.users.meta.lastPage"
+    />
     <Link class="btn btn-primary btn-sm" href="/admin/dashboard/users/create">Create a User</Link>
   </div>
   <div class="card bg-base-100 shadow-xl">
@@ -25,7 +31,7 @@ const props = defineProps({
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(user, index) in props.users" :key="user.id">
+          <tr v-for="(user, index) in props.users.data" :key="user.id">
             <th>{{ index + 1 }}</th>
             <td>{{ user.fullName }}</td>
             <td>{{ user.email }}</td>
