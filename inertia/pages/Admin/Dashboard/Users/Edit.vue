@@ -29,7 +29,6 @@ const submit = () => {
 </script>
 
 <template>
-  {{ props.user }}
   <div class="card mx-auto bg-base-100 shadow-xl">
     <form @submit.prevent="submit" class="card-body">
       <div class="form-control">
