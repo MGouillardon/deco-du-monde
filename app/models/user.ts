@@ -39,7 +39,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @computed()
   get roleName() {
-    return this.role?.name
+    return Role.getDisplayName(this.role?.name || '')
   }
 
   static nonAdmin = scope((query) => {

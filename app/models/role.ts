@@ -17,9 +17,13 @@ export default class Role extends BaseModel {
 
   @computed()
   get displayName() {
+    return Role.getDisplayName(this.name)
+  }
+
+  static getDisplayName(name: string): string {
     return (
-      Role.displayNames[this.name] ||
-      this.name
+      this.displayNames[name] ||
+      name
         .split('_')
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join(' ')
