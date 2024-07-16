@@ -37,6 +37,8 @@ router
     router.get('/listing', [UsersController, 'index']).as('listing.user')
     router.get('/create', [UsersController, 'create']).as('create.user')
     router.post('/store', [UsersController, 'store']).as('store.user')
+    router.get('/edit/:id', [UsersController, 'edit']).as('edit.user')
+    router.put('/update/:id', [UsersController, 'update']).as('update.user')
   })
   .prefix('admin/dashboard/users')
   .use(middleware.auth())
