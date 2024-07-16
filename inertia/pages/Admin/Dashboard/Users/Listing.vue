@@ -37,7 +37,7 @@ const props = defineProps({
             <td>{{ user.email }}</td>
             <td>{{ user.roleName }}</td>
             <td class="flex gap-2">
-              <a class="btn btn-sm" href="#">Update</a>
+              <Link class="btn btn-sm" :href="`/admin/dashboard/users/edit/${user.id}`">Update</Link>
               <a class="btn btn-sm btn-error" href="#">Delete</a>
             </td>
           </tr>
