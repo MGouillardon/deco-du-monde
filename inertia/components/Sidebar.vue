@@ -21,7 +21,11 @@ import DataIcon from '@/components/icons/DataIcon.vue'
           </Link>
         </li>
         <li>
-          <Link><UsersIcon />Users</Link>
+          <Link
+            href="/admin/dashboard/users/listing"
+            :class="{ active: $page.url === '/admin/dashboard/users/listing' }"
+            ><UsersIcon />Users</Link
+          >
         </li>
         <li>
           <a><CalendarIcon />Calendar</a>
