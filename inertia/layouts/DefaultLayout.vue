@@ -2,18 +2,30 @@
 import Header from '@/components/Header.vue'
 import AsideLayout from '@/layouts/AsideLayout.vue'
 import FlashMessage from '@/components/Messages/FlashMessage.vue'
-import { usePage } from '@inertiajs/vue3'
+import PageTitle from '@/components/PageTitle.vue'
+import { usePage, Head } from '@inertiajs/vue3'
 import { computed } from 'vue'
+
+const props = defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
+})
 
 const page = usePage()
 const flash = computed(() => page.props?.success)
 const user = computed(() => page.props.auth?.fullName)
+
+const pageTitle = computed(() => `${props.title} | Admin`)
 </script>
 
 <template>
+  <Head :title="pageTitle" />
   <Header v-if="user" :user="user" />
   <AsideLayout>
     <main class="mx-auto h-full w-full p-4 md:p-6 lg:p-8 max-w-7xl">
+      <PageTitle v-if="title" :title="title" />
       <slot></slot>
     </main>
     <FlashMessage v-if="flash" :flash="flash" :key="flash" />

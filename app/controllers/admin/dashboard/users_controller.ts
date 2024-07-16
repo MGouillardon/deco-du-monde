@@ -6,11 +6,12 @@ export default class UsersController {
    * Display a list of resource
    */
   async index({ inertia }: HttpContext) {
+    const title = 'Listing'
     const users = await User.query()
       .withScopes((scopes) => scopes.nonAdmin())
       .preload('role')
 
-    return inertia.render('Admin/Dashboard/Users/Listing', { users })
+    return inertia.render('Admin/Dashboard/Users/Listing', { users, title })
   }
 
   /**

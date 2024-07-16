@@ -4,7 +4,7 @@ import type { DefineComponent } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
-const appName = import.meta.env.VITE_APP_NAME || 'AdonisJS'
+const appName = import.meta.env.VITE_APP_NAME || 'Déco du Monde'
 
 createInertiaApp({
   progress: { color: '#5468FF' },
