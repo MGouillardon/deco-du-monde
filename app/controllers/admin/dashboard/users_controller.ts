@@ -40,8 +40,6 @@ export default class UsersController {
     return response.redirect().toRoute('listing.user')
   }
 
-  async show({ params }: HttpContext) {}
-
   async edit({ inertia, params }: HttpContext) {
     const title = 'Edit User'
     const user = await User.query().where('id', params.id).preload('role').firstOrFail()
