@@ -23,7 +23,7 @@ import DataIcon from '@/components/icons/DataIcon.vue'
         <li>
           <Link
             href="/admin/dashboard/users/listing"
-            :class="{ active: $page.url === '/admin/dashboard/users/listing' }"
+            :class="{ active: $page.url.startsWith('/admin/dashboard/users') }"
             ><UsersIcon />Users</Link
           >
         </li>
