@@ -39,6 +39,7 @@ router
     router.post('/store', [UsersController, 'store']).as('store.user')
     router.get('/edit/:id', [UsersController, 'edit']).as('edit.user')
     router.put('/update/:id', [UsersController, 'update']).as('update.user')
+    router.delete('/delete/:id', [UsersController, 'destroy']).as('delete.user')
   })
   .prefix('admin/dashboard/users')
   .use(middleware.auth())
