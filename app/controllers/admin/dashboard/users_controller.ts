@@ -77,5 +77,10 @@ export default class UsersController {
     return response.redirect().toRoute('listing.user')
   }
 
-  async destroy({ params }: HttpContext) {}
+  async destroy({ params, response, session }: HttpContext) {
+    const user = await User.findOrFail(params.id)
+    await user.delete()
+    session.flash('success', 'User deleted successfully')
+    return response.redirect().toRoute('listing.user')
+  }
 }
