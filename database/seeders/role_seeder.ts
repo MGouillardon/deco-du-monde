@@ -7,9 +7,9 @@ export default class extends BaseSeeder {
     await Role.createMany([
       { id: Roles.ADMIN, name: 'admin' },
       { id: Roles.PHOTOGRAPHE, name: 'photographe' },
-      { id: Roles.ASSISTANT_PHOTOGRAPHE, name: 'assistant-photographe' },
+      { id: Roles.ASSISTANT_PHOTOGRAPHE, name: 'assistant_photographe' },
       { id: Roles.DECORATEUR, name: 'décorateur' },
-      { id: Roles.ASSISTANT_DECORATEUR, name: 'assistant-decorateur' },
+      { id: Roles.ASSISTANT_DECORATEUR, name: 'assistant_decorateur' },
       { id: Roles.CHAUFFEUR_ASSISTANT, name: 'chauffeur_assistant' },
     ])
   }
