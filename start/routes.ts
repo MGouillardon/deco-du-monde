@@ -34,6 +34,9 @@ router
 
 router
   .group(() => {
+    router
+      .get('/', ({ response }) => response.redirect('/admin/dashboard/users/listing'))
+      .as('users')
     router.get('/listing', [UsersController, 'index']).as('listing.user')
     router.get('/create', [UsersController, 'create']).as('create.user')
     router.post('/store', [UsersController, 'store']).as('store.user')
