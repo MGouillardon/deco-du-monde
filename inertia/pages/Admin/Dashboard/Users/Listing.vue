@@ -1,12 +1,18 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import Pagination from '@/components/UI/Pagination.vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   users: {
     type: Object,
     required: true,
   },
+})
+const startIndex = computed(() => {
+  const currentPage = props.users.meta.currentPage
+  const perPage = props.users.meta.perPage || 10 
+  return (currentPage - 1) * perPage + 1
 })
 </script>
 
@@ -32,7 +38,7 @@ const props = defineProps({
         </thead>
         <tbody>
           <tr v-for="(user, index) in props.users.data" :key="user.id">
-            <th>{{ index + 1 }}</th>
+            <th>{{ startIndex + index }}</th>
             <td>{{ user.fullName }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.roleName }}</td>
