@@ -9,7 +9,6 @@ const props = defineProps({
   type: {
     type: String,
     default: 'info',
-    validator: (value) => ['success', 'info'].includes(value),
   },
 })
 
