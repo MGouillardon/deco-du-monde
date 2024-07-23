@@ -2,6 +2,8 @@
 import { computed } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 
+const DASHBOARD_PATH = '/admin/dashboard'
+
 const page = usePage()
 const currentRoute = computed(() => page.url)
 
@@ -9,39 +11,51 @@ const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-const createBreadcrumbItem = (name, path, current = false) => {
+const createBreadcrumbItem = (name, path, isActive = false) => {
   return {
     name: capitalizeFirstLetter(name),
     path,
-    current,
+    isActive,
   }
 }
 
-const isLastPartNumeric = (parts, index) => {
+const isLastPartId = (parts, index) => {
   return index === parts.length - 1 && !isNaN(parts[index])
 }
 
-const breadcrumbs = computed(() => {
-  const parts = currentRoute.value.split('/').filter(Boolean)
-  const items = [createBreadcrumbItem('Dashboard', '/admin/dashboard')]
-  let currentPath = ''
+const removeIdFromParts = (parts) => {
+  return parts.filter((part, index) => !isLastPartId(parts, index))
+}
 
-  for (let i = 2; i < parts.length; i++) {
-    if (isLastPartNumeric(parts, i)) continue
+const generateBreadcrumbs = (urlParts) => {
+  return urlParts.reduce(
+    (items, part, index) => {
+      const cleanPart = part.split('?')[0]
+      const currentPath = `${DASHBOARD_PATH}/${urlParts.slice(0, index + 1).join('/')}`
 
-    const part = parts[i].split('?')[0]
-    currentPath += `/${part}`
-
-    items.push(
-      createBreadcrumbItem(
-        part,
-        i === parts.length - 1 ? currentPath : `/admin/dashboard/${part}`,
-        i === parts.length - 1
+      items.push(
+        createBreadcrumbItem(
+          cleanPart,
+          index === urlParts.length - 1 ? currentPath : `${DASHBOARD_PATH}/${cleanPart}`,
+          index === urlParts.length - 1
+        )
       )
-    )
-  }
 
-  return items
+      return items
+    },
+    [createBreadcrumbItem('Dashboard', DASHBOARD_PATH)]
+  )
+}
+
+const breadcrumbs = computed(() => {
+  try {
+    const urlParts = currentRoute.value.split('/').filter(Boolean).slice(2)
+    const partsWithoutId = removeIdFromParts(urlParts)
+    return generateBreadcrumbs(partsWithoutId)
+  } catch (error) {
+    console.error('Error generating breadcrumbs:', error)
+    return [createBreadcrumbItem('Dashboard', DASHBOARD_PATH, true)]
+  }
 })
 </script>
 
@@ -49,7 +63,7 @@ const breadcrumbs = computed(() => {
   <div v-if="breadcrumbs.length > 1" class="breadcrumbs text-sm">
     <ul>
       <li v-for="crumb in breadcrumbs" :key="crumb.path">
-        <Link v-if="!crumb.current" :href="crumb.path">{{ crumb.name }}</Link>
+        <Link v-if="!crumb.isActive" :href="crumb.path">{{ crumb.name }}</Link>
         <span v-else>{{ crumb.name }}</span>
       </li>
     </ul>
