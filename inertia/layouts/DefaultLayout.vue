@@ -15,7 +15,10 @@ const props = defineProps({
 })
 
 const page = usePage()
-const flash = computed(() => page.props?.success)
+const flashMessages = computed(() => ({
+  success: page.props.success,
+  info: page.props.info
+}))
 const user = computed(() => page.props.auth?.fullName)
 
 const pageTitle = computed(() => `${props.title} | Admin`)
@@ -30,36 +33,7 @@ const pageTitle = computed(() => `${props.title} | Admin`)
       <PageTitle v-if="title" :title="title" />
       <slot></slot>
     </main>
-    <FlashMessage v-if="flash" :flash="flash" :key="flash" />
+    <FlashMessage v-if="flashMessages.success" type="success" :message="flashMessages.success" />
+    <FlashMessage v-if="flashMessages.info" type="info" :message="flashMessages.info" />
   </AsideLayout>
 </template>
-
-<style scoped>
-.toast {
-  animation:
-    slide-up 0.5s forwards,
-    slide-down 0.8s 2s forwards;
-}
-
-@keyframes slide-up {
-  0% {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slide-down {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-}
-</style>
