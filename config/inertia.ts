@@ -14,6 +14,7 @@ const inertiaConfig = defineConfig({
     auth: (ctx) => ctx.auth?.user,
     errors: (ctx) => ctx.session?.flashMessages.get('errors'),
     success: (ctx) => ctx.session?.flashMessages.get('success'),
+    info: (ctx) => ctx.session?.flashMessages.get('info'),
   },
 
   /**
