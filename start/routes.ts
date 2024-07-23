@@ -9,6 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
+const ProfileController = () => import('#controllers/admin/dashboard/profile_controller')
 const PasswordResetController = () => import('#controllers/auth/password_reset_controller')
 const UsersController = () => import('#controllers/admin/dashboard/users_controller')
 const LogoutController = () => import('#controllers/auth/logout_controller')
@@ -32,6 +33,7 @@ router
 router
   .group(() => {
     router.get('/dashboard', [RenderController]).as('dashboard')
+    router.get('/dashboard/profile/:id', [ProfileController, 'show']).as('profile.show')
     router.delete('/logout', [LogoutController]).as('logout')
   })
   .prefix('admin')

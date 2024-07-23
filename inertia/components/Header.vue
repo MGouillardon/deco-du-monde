@@ -11,7 +11,7 @@ const props = defineProps({
 })
 
 const userInitial = computed(() => {
-  return props.user
+  return props.user.fullName
     .split(' ')
     .map((name) => name.charAt(0))
     .join('')
@@ -50,7 +50,7 @@ const userInitial = computed(() => {
           class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-5 w-52 p-2 shadow"
         >
           <li>
-            <a><UserIcon />Profile</a>
+            <Link :href="`/admin/dashboard/profile/${user.id}`"><UserIcon />Profile</Link>
           </li>
           <li>
             <Link href="/admin/logout" method="delete" as="button" type="button"

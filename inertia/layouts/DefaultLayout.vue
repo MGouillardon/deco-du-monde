@@ -19,7 +19,7 @@ const flashMessages = computed(() => ({
   success: page.props.success,
   info: page.props.info
 }))
-const user = computed(() => page.props.auth?.fullName)
+const user = computed(() => page.props.auth)
 
 const pageTitle = computed(() => `${props.title} | Admin`)
 </script>
