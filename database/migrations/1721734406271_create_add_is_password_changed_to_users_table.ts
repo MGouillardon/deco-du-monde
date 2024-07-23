@@ -10,6 +10,10 @@ export default class extends BaseSchema {
   }
 
   async down() {
-    this.schema.dropTable(this.tableName)
+    if (await this.schema.hasTable(this.tableName)) {
+      this.schema.alterTable(this.tableName, (table) => {
+        table.dropColumn('is_password_changed')
+      })
+    }
   }
 }
