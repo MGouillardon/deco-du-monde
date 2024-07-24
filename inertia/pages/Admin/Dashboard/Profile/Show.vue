@@ -77,8 +77,7 @@ const updateProfile = () => {
     <div class="card bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title text-xl mb-4">Account Security</h2>
-        <p>You can make a reset password request here.</p>
-        <p>We will send you an email with instructions on how to reset your password.</p>
+        <p>You can make a reset password request here. <br>We will send you an email with instructions on how to reset your password.</p>
         <div class="card-actions">
           <button
             @click="requestPasswordReset"
