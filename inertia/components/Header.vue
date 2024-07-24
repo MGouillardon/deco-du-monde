@@ -7,7 +7,7 @@ import SearchIcon from '@/components/icons/SearchIcon.vue'
 import BurgerMenuIcon from '@/components/icons/BurgerMenuIcon.vue'
 
 const props = defineProps({
-  user: String,
+  user: Object,
 })
 
 const userInitial = computed(() => {
