@@ -1,4 +1,5 @@
 import User from '#models/user'
+import { updateProfileValidator } from '#validators/dashboard/profile/update'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class ProfileController {
@@ -19,5 +20,16 @@ export default class ProfileController {
     return User.query().where('id', id).preload('role').firstOrFail()
   }
 
-  async update() {}
+  async update({ request, response, session }: HttpContext) {
+    const { id } = request.params()
+    const user = await User.findOrFail(id)
+    const { fullName, email } = await request.validateUsing(updateProfileValidator(user.id))
+
+    user.fullName = fullName
+    user.email = email
+    await user.save()
+
+    session.flash('success', 'Profile updated successfully')
+    return response.redirect().back()
+  }
 }
