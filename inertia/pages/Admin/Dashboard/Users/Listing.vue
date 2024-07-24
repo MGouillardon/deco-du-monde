@@ -1,7 +1,8 @@
 <script setup>
-import { Link } from '@inertiajs/vue3'
+import { ref, computed } from 'vue'
+import { Link, useForm } from '@inertiajs/vue3'
 import Pagination from '@/components/UI/Pagination.vue'
-import { computed } from 'vue'
+import Modal from '@/components/UI/Modal.vue'
 
 const props = defineProps({
   users: {
@@ -9,11 +10,36 @@ const props = defineProps({
     required: true,
   },
 })
+
 const startIndex = computed(() => {
-  const currentPage = props.users.meta.currentPage
-  const perPage = props.users.meta.perPage || 10 
+  const { currentPage, perPage = 10 } = props.users.meta
   return (currentPage - 1) * perPage + 1
 })
+
+const showDeleteModal = ref(false)
+const userToDelete = ref(null)
+
+const deleteForm = useForm({})
+
+const openDeleteModal = (user) => {
+  userToDelete.value = user
+  showDeleteModal.value = true
+}
+
+const closeDeleteModal = () => {
+  showDeleteModal.value = false
+  userToDelete.value = null
+}
+
+const confirmDelete = () => {
+  deleteForm.delete(`/admin/dashboard/users/delete/${userToDelete.value.id}`, {
+    preserveScroll: true,
+    preserveState: true,
+    onSuccess: () => {
+      closeDeleteModal()
+    },
+  })
+}
 </script>
 
 <template>
@@ -43,12 +69,27 @@ const startIndex = computed(() => {
             <td>{{ user.email }}</td>
             <td>{{ user.roleName }}</td>
             <td class="flex gap-2">
-              <Link class="btn btn-sm" :href="`/admin/dashboard/users/edit/${user.id}`">Update</Link>
-              <Link class="btn btn-sm btn-error" :href="`/admin/dashboard/users/delete/${user.id}`" method="DELETE" as="button">Delete</Link>
+              <Link class="btn btn-sm" :href="`/admin/dashboard/users/edit/${user.id}`"
+                >Update</Link
+              >
+              <button class="btn btn-sm btn-error" @click="openDeleteModal(user)">Delete</button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
+
+  <Modal :is-open="showDeleteModal" @close="closeDeleteModal">
+    <template #header>
+      <h3 class="font-bold text-lg">Confirm Deletion</h3>
+    </template>
+    <p class="py-4">
+      Are you sure you want to delete {{ userToDelete?.fullName }}? This action cannot be undone.
+    </p>
+    <template #footer>
+      <button class="btn btn-sm" @click="closeDeleteModal">Cancel</button>
+      <button class="btn btn-error btn-sm" @click="confirmDelete">Delete</button>
+    </template>
+  </Modal>
 </template>
