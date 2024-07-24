@@ -44,7 +44,7 @@ const updateProfile = () => {
               />
             </label>
           </div>
-          <ErrorFieldMessage v-if="props.errors" :error="props.errors.fullName" />
+          <ErrorFieldMessage class="mt-2" v-if="props.errors" :error="props.errors.fullName" />
           <div class="form-control mt-4">
             <label class="label">
               <span class="label-text">Email</span>
@@ -54,7 +54,7 @@ const updateProfile = () => {
               <input type="email" v-model="form.email" class="grow" />
             </label>
           </div>
-          <ErrorFieldMessage v-if="props.errors" :error="props.errors.email" />
+          <ErrorFieldMessage class="mt-2" v-if="props.errors" :error="props.errors.email" />
           <div class="form-control mt-4">
             <label class="label">
               <span class="label-text">Role</span>
