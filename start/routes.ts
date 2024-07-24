@@ -22,19 +22,30 @@ router
   .group(() => {
     router.get('/login', [LoginController, 'render']).as('login')
     router.post('/login', [LoginController, 'login'])
-    router
-      .get('/password/reset/:token', [PasswordResetController, 'show'])
-      .as('password.reset.form')
-    router.post('/password/reset', [PasswordResetController, 'reset']).as('password.reset')
   })
   .prefix('admin')
   .use(middleware.guest())
 
 router
   .group(() => {
+    router
+      .get('/password/reset/:token', [PasswordResetController, 'show'])
+      .as('password.reset.form')
+    router.post('/password/reset', [PasswordResetController, 'reset']).as('password.reset')
+  })
+  .prefix('admin')
+
+router
+  .group(() => {
     router.get('/dashboard', [RenderController]).as('dashboard')
     router.get('/dashboard/profile/:id', [ProfileController, 'show']).as('profile.show')
     router.put('/dashboard/profile/update/:id', [ProfileController, 'update']).as('profile.update')
+    router
+      .post('/dashboard/profile/:id/request-password-reset', [
+        ProfileController,
+        'requestPasswordReset',
+      ])
+      .as('profile.request_password_reset')
     router.delete('/logout', [LogoutController]).as('logout')
   })
   .prefix('admin')
