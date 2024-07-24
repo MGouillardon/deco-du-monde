@@ -34,6 +34,7 @@ router
   .group(() => {
     router.get('/dashboard', [RenderController]).as('dashboard')
     router.get('/dashboard/profile/:id', [ProfileController, 'show']).as('profile.show')
+    router.put('/dashboard/profile/update/:id', [ProfileController, 'update']).as('profile.update')
     router.delete('/logout', [LogoutController]).as('logout')
   })
   .prefix('admin')
