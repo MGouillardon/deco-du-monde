@@ -3,9 +3,11 @@ import { useForm } from '@inertiajs/vue3'
 import UserIcon from '@/components/icons/UserIcon.vue'
 import EmailIcon from '@/components/icons/EmailIcon.vue'
 import PasswordIcon from '@/components/icons/PwdIcon.vue'
+import ErrorFieldMessage from '@/components/Messages/ErrorFieldMessage.vue'
 
 const props = defineProps({
   user: Object,
+  errors: Object,
 })
 const form = useForm({
   fullName: props.user.fullName,
@@ -17,7 +19,7 @@ const requestPasswordReset = () => {
 }
 
 const updateProfile = () => {
-  console.log('Profile update requested', form)
+  form.put(`/admin/dashboard/profile/update/${props.user.id}`, form)
 }
 </script>
 
@@ -32,7 +34,7 @@ const updateProfile = () => {
               <span class="label-text">Full Name</span>
             </label>
             <label class="input input-bordered flex items-center gap-2">
-              <UserIcon class="w-5 h-5" />
+              <UserIcon />
               <input
                 type="text"
                 id="fullName"
@@ -42,15 +44,17 @@ const updateProfile = () => {
               />
             </label>
           </div>
+          <ErrorFieldMessage v-if="props.errors" :error="props.errors.fullName" />
           <div class="form-control mt-4">
             <label class="label">
               <span class="label-text">Email</span>
             </label>
             <label class="input input-bordered flex items-center gap-2">
-              <EmailIcon class="w-5 h-5" />
-              <input type="email" :value="user.email" class="grow" />
+              <EmailIcon />
+              <input type="email" v-model="form.email" class="grow" />
             </label>
           </div>
+          <ErrorFieldMessage v-if="props.errors" :error="props.errors.email" />
           <div class="form-control mt-4">
             <label class="label">
               <span class="label-text">Role</span>
@@ -58,7 +62,9 @@ const updateProfile = () => {
             <input type="text" :value="user.roleName" class="input input-bordered" disabled />
           </div>
           <div class="card-actions justify-end mt-6">
-            <button type="submit" class="btn btn-primary">Update Profile</button>
+            <button type="submit" class="btn btn-primary" :disabled="form.processing">
+              {{ form.processing ? 'Updating...' : 'Update Profile' }}
+            </button>
           </div>
         </form>
       </div>
@@ -66,10 +72,13 @@ const updateProfile = () => {
     <div class="card bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title text-xl mb-4">Account Security</h2>
-        <p>You can make a reset password request here. We will send you an email with instructions on how to reset your password.</p>
+        <p>
+          You can make a reset password request here. We will send you an email with instructions on
+          how to reset your password.
+        </p>
         <div class="card-actions">
           <button @click="requestPasswordReset" class="btn btn-secondary btn-block">
-            <PasswordIcon class="w-5 h-5 mr-2" />
+            <PasswordIcon />
             Request Password Reset
           </button>
         </div>
