@@ -1,4 +1,6 @@
-import { BaseModel, column, computed } from '@adonisjs/lucid/orm'
+import { BaseModel, column, computed, hasMany } from '@adonisjs/lucid/orm'
+import User from '#models/user'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
 
 export default class Role extends BaseModel {
   @column({ isPrimary: true })
@@ -6,6 +8,9 @@ export default class Role extends BaseModel {
 
   @column()
   declare name: string
+
+  @hasMany(() => User)
+  declare users: HasMany<typeof User>
 
   private static readonly displayNames: Record<string, string> = {
     chauffeur_assistant: 'Chauffeur Assistant',

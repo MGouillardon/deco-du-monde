@@ -7,6 +7,8 @@ import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import Role from '#models/role'
 import Roles from '#enums/roles'
 import PasswordResetToken from '#models/password_reset_token'
+import Workday from './workday.js'
+import ScheduleAssignment from './schedule_assignment.js'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -32,17 +34,23 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare isPasswordChanged: boolean
 
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+
   @belongsTo(() => Role)
   declare role: BelongsTo<typeof Role>
 
   @hasMany(() => PasswordResetToken)
   declare passwordResetTokens: HasMany<typeof PasswordResetToken>
 
-  @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
+  @hasMany(() => Workday)
+  declare workdays: HasMany<typeof Workday>
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime | null
+  @hasMany(() => ScheduleAssignment)
+  declare scheduleAssignments: HasMany<typeof ScheduleAssignment>
 
   @computed()
   get roleName() {
