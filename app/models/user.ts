@@ -57,7 +57,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
     return Role.getDisplayName(this.role?.name || '')
   }
 
-  static nonAdmin = scope((query) => {
+  static withoutAdmin = scope((query) => {
     query.where('role_id', '!=', Roles.ADMIN)
   })
 

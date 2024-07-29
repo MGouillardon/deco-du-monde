@@ -12,7 +12,7 @@ export default class UsersController {
     const limit = 10
 
     const users = await User.query()
-      .withScopes((scopes) => scopes.nonAdmin())
+      .withScopes((scopes) => scopes.withoutAdmin())
       .preload('role')
       .paginate(page, limit)
 
