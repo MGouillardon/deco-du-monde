@@ -13,11 +13,12 @@ export default class Role extends BaseModel {
   declare users: HasMany<typeof User>
 
   private static readonly displayNames: Record<string, string> = {
-    chauffeur_assistant: 'Chauffeur Assistant',
-    assistant_decorateur: 'Assistant Décorateur',
-    décorateur: 'Décorateur',
-    assistant_photographe: 'Assistant Photographe',
-    photographe: 'Photographe',
+    driver_assistant: 'Driver Assistant',
+    admin: 'Admin',
+    photograph: 'Photograph',
+    assistant_photograph: 'Assistant Photograph',
+    decorator: 'Decorator',
+    assistant_decorator: 'Assistant Decorator',
   }
 
   @computed()
