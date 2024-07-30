@@ -8,7 +8,7 @@ export default class extends BaseSchema {
       table.increments('id').notNullable()
       table.integer('set_id').unsigned().references('id').inTable('sets').onDelete('CASCADE')
       table.integer('item_id').unsigned().references('id').inTable('items').onDelete('CASCADE')
-      table.timestamp('created_at').notNullable()
+      table.timestamp('created_at', { useTz: true }).notNullable().defaultTo(this.now())
     })
   }
 

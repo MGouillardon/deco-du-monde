@@ -9,6 +9,7 @@ export default class extends BaseSchema {
       table.integer('user_id').unsigned().references('id').inTable('users')
       table.integer('schedule_id').unsigned().references('id').inTable('schedules')
       table.timestamp('created_at').notNullable()
+      table.timestamp('updated_at').nullable()
     })
   }
 

@@ -24,9 +24,6 @@ export default class SetValidation extends BaseModel {
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime
-
   @belongsTo(() => Set)
   declare set: BelongsTo<typeof Set>
 
