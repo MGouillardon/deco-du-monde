@@ -13,13 +13,16 @@ export default class SetValidation extends BaseModel {
   declare setId: number
 
   @column()
-  declare userId: number
+  declare userId: number | null
 
   @column()
   declare type: SetValidationType
 
   @column()
   declare isValidated: boolean
+
+  @column.dateTime()
+  declare validatedAt: DateTime | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
