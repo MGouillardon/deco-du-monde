@@ -34,8 +34,14 @@ import DataIcon from '@/components/icons/DataIcon.vue'
           <details>
             <summary><CameraIcon />Work</summary>
             <ul>
+              <li>
+                <Link
+                  href="/admin/dashboard/items/listing"
+                  :class="{ active: $page.url.startsWith('/admin/dashboard/items') }"
+                  >Items</Link
+                >
+              </li>
               <li><a>Sets</a></li>
-              <li><a>Items</a></li>
             </ul>
           </details>
         </li>
