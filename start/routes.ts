@@ -9,6 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
+import ItemController from '#controllers/admin/dashboard/item_controller'
 const ProfileController = () => import('#controllers/admin/dashboard/profile_controller')
 const PasswordResetController = () => import('#controllers/auth/password_reset_controller')
 const UsersController = () => import('#controllers/admin/dashboard/users_controller')
@@ -64,4 +65,19 @@ router
     router.delete('/delete/:id', [UsersController, 'destroy']).as('delete.user')
   })
   .prefix('admin/dashboard/users')
+  .use(middleware.auth())
+
+router
+  .group(() => {
+    router
+      .get('/', ({ response }) => response.redirect('/admin/dashboard/items/listing'))
+      .as('items')
+    router.get('/listing', [ItemController, 'index']).as('listing.item')
+    router.get('/create', [ItemController, 'create']).as('create.item')
+    router.post('/store', [ItemController, 'store']).as('store.item')
+    router.get('/edit/:id', [ItemController, 'edit']).as('edit.item')
+    router.put('/update/:id', [ItemController, 'update']).as('update.item')
+    router.delete('/delete/:id', [ItemController, 'destroy']).as('delete.item')
+  })
+  .prefix('admin/dashboard/items')
   .use(middleware.auth())
