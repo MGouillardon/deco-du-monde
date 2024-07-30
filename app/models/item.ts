@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
-import type { HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, hasMany, hasOne, manyToMany } from '@adonisjs/lucid/orm'
+import type { HasMany, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
 import ItemStatus from './item_status.js'
 import ItemValidation from './item_validation.js'
 import Set from '#models/set'
@@ -24,8 +24,8 @@ export default class Item extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  @hasMany(() => ItemStatus)
-  declare statuses: HasMany<typeof ItemStatus>
+  @hasOne(() => ItemStatus)
+  declare status: HasOne<typeof ItemStatus>
 
   @hasMany(() => ItemValidation)
   declare validations: HasMany<typeof ItemValidation>
