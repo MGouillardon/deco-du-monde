@@ -25,7 +25,7 @@ export default class Item extends BaseModel {
   declare updatedAt: DateTime
 
   @hasOne(() => ItemStatus)
-  declare status: HasOne<typeof ItemStatus>
+  declare itemStatus: HasOne<typeof ItemStatus>
 
   @hasMany(() => ItemValidation)
   declare validations: HasMany<typeof ItemValidation>
