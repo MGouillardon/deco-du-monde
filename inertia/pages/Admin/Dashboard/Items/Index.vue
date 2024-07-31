@@ -1,32 +1,79 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { Link } from '@inertiajs/vue3'
-import Pagination from '@/components/UI/Pagination.vue'
-import Modal from '@/components/UI/Modal.vue'
+import { computed } from 'vue'
+import ListingTable from '@/components/ListingTable.vue'
 
 const props = defineProps({
-  items: Object,
+  items: {
+    type: Object,
+    required: true,
+  },
 })
 
-const showDeleteModal = ref(false)
-const itemToDelete = ref(null)
+const columns = [
+  { key: 'name', label: 'Name' },
+  { key: 'isPhotographedStudio', label: 'Studio Photo Taken' },
+  { key: 'isValidated', label: 'Studio Photo Validated' },
+  { key: 'needsInSituPhoto', label: 'In Situ Photo Needed' },
+  { key: 'status', label: 'Status' },
+  { key: 'setsCount', label: 'Sets' },
+]
 
-const startIndex = computed(() => (props.items.meta.currentPage - 1) * props.items.meta.perPage + 1)
+const actions = [
+  {
+    label: 'View',
+    link: (item) => `/admin/dashboard/items/show/${item.id}`,
+    class: 'btn-secondary',
+  },
+  {
+    label: 'Update',
+    link: (item) => `/admin/dashboard/items/edit/${item.id}`,
+    class: 'btn-primary',
+  },
+  {
+    label: 'Delete',
+    event: 'delete',
+    class: 'btn-error',
+  },
+]
 
-
-function openDeleteModal(item) {
-  itemToDelete.value = item
-  showDeleteModal.value = true
+const BADGE_CLASSES = {
+  SUCCESS: 'badge badge-success',
+  ERROR: 'badge badge-error',
+  INFO: 'badge badge-info',
+  GHOST: 'badge badge-ghost',
+  WARNING: 'badge badge-warning',
 }
 
-function closeDeleteModal() {
-  showDeleteModal.value = false
-  itemToDelete.value = null
+const STATUS_CLASSES = {
+  normal: BADGE_CLASSES.INFO,
+  damaged: BADGE_CLASSES.WARNING,
+  lost: BADGE_CLASSES.ERROR,
 }
 
-function confirmDelete() {
-  closeDeleteModal()
-}
+const formatBadge = (condition, trueValue, falseValue) => ({
+  value: condition ? trueValue : falseValue,
+  class: condition ? BADGE_CLASSES.SUCCESS : BADGE_CLASSES.ERROR,
+})
+
+const formatItem = (item) => ({
+  ...item,
+  isPhotographedStudio: formatBadge(item.isPhotographedStudio, 'Yes', 'No'),
+  isValidated: formatBadge(item.validations.length > 0, 'Yes', 'No'),
+  needsInSituPhoto: {
+    value: item.sets.length === 0 ? 'Yes' : 'No',
+    class: item.sets.length === 0 ? BADGE_CLASSES.INFO : BADGE_CLASSES.GHOST,
+  },
+  setsCount: item.sets.length,
+  status: {
+    value: item.itemStatus?.status ?? '',
+    class: STATUS_CLASSES[item.itemStatus?.status] ?? BADGE_CLASSES.INFO,
+  },
+})
+
+const formattedItems = computed(() => ({
+  ...props.items,
+  data: props.items.data.map(formatItem),
+}))
 
 const itemsNeedingStudioPhoto = computed(() =>
   props.items.data.filter((item) => !item.isPhotographedStudio)
@@ -40,83 +87,22 @@ const itemsNeedingInSituPhoto = computed(() =>
   props.items.data.filter((item) => item.sets.length === 0)
 )
 
-function scheduleStudioPhoto(item) {}
+const scheduleStudioPhoto = (item) => {}
 
-function validatePhoto(item) {}
+const validatePhoto = (item) => {}
 
-function assignToSet(item) {}
+const assignToSet = (item) => {}
 </script>
 
 <template>
-  <div class="flex justify-between items-center mb-4">
-    <Pagination
-      :current-page="props.items.meta.currentPage"
-      :last-page="props.items.meta.lastPage"
-    />
-    <Link class="btn btn-primary btn-sm" href="/admin/dashboard/items/create">Create an Item</Link>
-  </div>
-  <div class="card bg-base-100 shadow-xl mb-8">
-    <div class="overflow-x-auto">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Studio Photo Taken</th>
-            <th>Studio Photo Validated</th>
-            <th>In Situ Photo Needed</th>
-            <th>Status</th>
-            <th>Sets</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in props.items.data" :key="item.id">
-            <th>{{ startIndex + index }}</th>
-            <td>{{ item.name }}</td>
-            <td>
-              <span
-                :class="item.isPhotographedStudio ? 'badge badge-success' : 'badge badge-error'"
-              >
-                {{ item.isPhotographedStudio ? 'Yes' : 'No' }}
-              </span>
-            </td>
-            <td>
-              <span
-                :class="item.validations.length > 0 ? 'badge badge-success' : 'badge badge-error'"
-              >
-                {{ item.validations.length > 0 ? 'Yes' : 'No' }}
-              </span>
-            </td>
-            <td>
-              <span :class="item.sets.length === 0 ? 'badge badge-info' : 'badge badge-ghost'">
-                {{ item.sets.length === 0 ? 'Yes' : 'No' }}
-              </span>
-            </td>
-            <td>
-              <span
-                :class="{
-                  'badge badge-info': item.itemStatus.status === 'normal',
-                  'badge badge-warning': item.itemStatus.status === 'damaged',
-                  'badge badge-error': item.itemStatus.status === 'lost',
-                }"
-              >
-                {{ item.itemStatus.status }}
-              </span>
-            </td>
-            <td>{{ item.sets.length }}</td>
-            <td class="flex gap-2">
-              <Link class="btn btn-sm btn-secondary" :href="`/admin/dashboard/items/show/${item.id}`">View</Link>
-              <Link class="btn btn-sm" :href="`/admin/dashboard/items/edit/${item.id}`"
-                >Update</Link
-              >
-              <button class="btn btn-sm btn-error" @click="openDeleteModal(item)">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <ListingTable
+    :items="formattedItems"
+    :columns="columns"
+    :actions="actions"
+    create-link="/admin/dashboard/items/create"
+    create-label="Create an Item"
+    delete-route="/admin/dashboard/items/delete"
+  />
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
     <div class="card bg-base-100 shadow-xl">
@@ -169,18 +155,4 @@ function assignToSet(item) {}
       </div>
     </div>
   </div>
-
-  <Modal :is-open="showDeleteModal" @close="closeDeleteModal">
-    <template #header>
-      <h3 class="font-bold text-lg">Confirm Deletion</h3>
-    </template>
-    <p class="py-4">
-      Are you sure you want to delete the item "{{ itemToDelete?.name }}"? This action cannot be
-      undone.
-    </p>
-    <template #footer>
-      <button class="btn btn-sm" @click="closeDeleteModal">Cancel</button>
-      <button class="btn btn-error btn-sm" @click="confirmDelete">Delete</button>
-    </template>
-  </Modal>
 </template>
