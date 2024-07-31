@@ -7,8 +7,9 @@ export default class ItemController {
     const page = request.input('page', 1)
     const limit = 10
     const items = await Item.query()
-      .preload('status', (query) => query.select('status'))
-      .preload('sets', (query) => query.select('id', 'name', 'is_photographed'))
+      .preload('itemStatus')
+      .preload('validations')
+      .preload('sets')
       .paginate(page, limit)
     return inertia.render('Admin/Dashboard/Items/Index', { title, items })
   }
