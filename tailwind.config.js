@@ -23,6 +23,7 @@ export default {
           '--rounded-badge': '1.9rem',
         },
       },
+      'dracula',
     ],
   },
 }

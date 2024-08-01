@@ -12,7 +12,7 @@ import DataIcon from '@/components/icons/DataIcon.vue'
   <aside class="drawer-side">
     <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
     <div
-      class="menu bg-base-100 border-r-2 border-r-bg-base-200 text-base-content min-h-full w-80 p-0"
+      class="menu bg-base-100 text-base-content min-h-full w-80 p-0"
     >
       <ul class="menu bg-base-100 p-4 mt-16 md:p-6 lg:p-8 gap-4">
         <li>
