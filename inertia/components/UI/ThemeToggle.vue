@@ -7,14 +7,8 @@ const { theme, toggleTheme } = useTheme()
 </script>
 
 <template>
-  <label class="flex cursor-pointer gap-2">
-    <SunIcon />
-    <input
-      type="checkbox"
-      :checked="theme === 'dracula'"
-      @change="toggleTheme"
-      class="toggle theme-controller"
-    />
-    <MoonIcon />
-  </label>
+  <button @click="toggleTheme" class="btn btn-ghost btn-circle">
+    <SunIcon v-if="theme === 'cupcake'" />
+    <MoonIcon v-else />
+  </button>
 </template>
