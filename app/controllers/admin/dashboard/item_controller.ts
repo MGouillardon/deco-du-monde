@@ -14,7 +14,10 @@ export default class ItemController {
     return inertia.render('Admin/Dashboard/Items/Index', { title, items })
   }
 
-  async create({}: HttpContext) {}
+  async create({ inertia }: HttpContext) {
+    const title = 'Create a new item'
+    return inertia.render('Admin/Dashboard/Items/Create', { title })
+  }
 
   async store({ request }: HttpContext) {}
 
