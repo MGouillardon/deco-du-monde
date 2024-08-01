@@ -59,10 +59,7 @@ const formatItem = (item) => ({
   ...item,
   isPhotographedStudio: formatBadge(item.isPhotographedStudio, 'Yes', 'No'),
   isValidated: formatBadge(item.validations.length > 0, 'Yes', 'No'),
-  needsInSituPhoto: {
-    value: item.sets.length === 0 ? 'Yes' : 'No',
-    class: item.sets.length === 0 ? BADGE_CLASSES.INFO : BADGE_CLASSES.GHOST,
-  },
+  needsInSituPhoto: formatBadge(item.sets.length === 0, 'Yes', 'No'),
   setsCount: item.sets.length,
   status: {
     value: item.itemStatus?.status ?? '',
@@ -80,7 +77,7 @@ const itemsNeedingStudioPhoto = computed(() =>
 )
 
 const itemsNeedingValidation = computed(() =>
-  props.items.data.filter((item) => item.isPhotographedStudio && item.validations.length === 0)
+  props.items.data.filter((item) => item.isPhotographedStudio && !item.validations.isValidated)
 )
 
 const itemsNeedingInSituPhoto = computed(() =>
@@ -115,7 +112,7 @@ const assignToSet = (item) => {}
             class="flex justify-between items-center mb-2"
           >
             <span>{{ item.name }}</span>
-            <button @click="scheduleStudioPhoto(item)" class="btn btn-sm btn-primary">
+            <button @click="scheduleStudioPhoto(item)" class="btn btn-sm btn-accent">
               Schedule
             </button>
           </li>
@@ -133,7 +130,7 @@ const assignToSet = (item) => {}
             class="flex justify-between items-center mb-2"
           >
             <span>{{ item.name }}</span>
-            <button @click="validatePhoto(item)" class="btn btn-sm btn-secondary">Validate</button>
+            <button @click="validatePhoto(item)" class="btn btn-sm btn-accent">Validate</button>
           </li>
         </ul>
       </div>
