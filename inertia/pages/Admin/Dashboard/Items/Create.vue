@@ -20,7 +20,6 @@ const submit = () => {
 <template>
   <div class="card mx-auto bg-base-100 shadow-xl">
     <form @submit.prevent="submit" class="card-body">
-      <h2 class="card-title mb-4">{{ title }}</h2>
       <div class="form-control">
         <label for="name" class="label">
           <span class="label-text">Item Name</span>
@@ -42,7 +41,7 @@ const submit = () => {
       </label>
       <textarea
         id="description"
-        class="textarea textarea-bordered h-24"
+        class="textarea textarea-bordered text-base"
         placeholder="Item description"
         v-model="form.description"
         rows="3"
