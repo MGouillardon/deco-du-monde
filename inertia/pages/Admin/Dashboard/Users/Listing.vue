@@ -16,7 +16,7 @@ const columns = [
 
 const actions = [
   {
-    label: 'Update',
+    label: 'Edit',
     link: (user) => `/admin/dashboard/users/edit/${user.id}`,
     class: 'btn-secondary',
   },

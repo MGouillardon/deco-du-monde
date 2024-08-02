@@ -61,7 +61,16 @@ export default class ItemController {
     return response.redirect().toRoute('listing.item')
   }
 
-  async show({ params }: HttpContext) {}
+  async show({ params, inertia }: HttpContext) {
+    const item = await Item.query()
+      .where('id', params.id)
+      .preload('itemStatus')
+      .preload('validations')
+      .preload('sets')
+      .firstOrFail()
+    const title = `Show item: ${item.name}`
+    return inertia.render('Admin/Dashboard/Items/Show', { title, item })
+  }
 
   async edit({ params }: HttpContext) {}
 

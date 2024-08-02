@@ -75,6 +75,7 @@ router
     router.get('/listing', [ItemController, 'index']).as('listing.item')
     router.get('/create', [ItemController, 'create']).as('create.item')
     router.post('/store', [ItemController, 'store']).as('store.item')
+    router.get('/show/:id', [ItemController, 'show']).as('show.item')
     router.get('/edit/:id', [ItemController, 'edit']).as('edit.item')
     router.put('/update/:id', [ItemController, 'update']).as('update.item')
     router.delete('/delete/:id', [ItemController, 'destroy']).as('delete.item')

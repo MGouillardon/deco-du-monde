@@ -25,7 +25,7 @@ const actions = [
     class: 'btn-secondary',
   },
   {
-    label: 'Update',
+    label: 'Edit',
     link: (item) => `/admin/dashboard/items/edit/${item.id}`,
     class: 'btn-primary',
   },
