@@ -67,5 +67,17 @@ export default class ItemController {
 
   async update({ params, request }: HttpContext) {}
 
-  async destroy({ params }: HttpContext) {}
+  async destroy({ params, session, response }: HttpContext) {
+    const { id } = params
+    await db.transaction(async (trx) => {
+      const item = await Item.findOrFail(id, { client: trx })
+      await item.related('sets').detach()
+      await item.related('itemStatus').query().delete()
+      await item.related('validations').query().delete()
+      await item.delete()
+    })
+
+    session.flash('success', 'Item deleted successfully')
+    return response.redirect().toRoute('listing.item')
+  }
 }
