@@ -65,7 +65,9 @@ export default class ItemController {
     const item = await Item.query()
       .where('id', params.id)
       .preload('itemStatus')
-      .preload('validations')
+      .preload('validations', (query) => {
+        query.preload('user')
+      })
       .preload('sets')
       .firstOrFail()
     const title = `Show item: ${item.name}`

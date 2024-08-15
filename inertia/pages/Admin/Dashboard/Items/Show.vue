@@ -1,6 +1,5 @@
 <script setup>
-import { ref } from 'vue'
-import { useForm, usePage } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 
 const props = defineProps({
   title: String,
@@ -21,6 +20,8 @@ const getStatusBadgeClass = (status) => {
       return 'badge-info'
     case 'damaged':
       return 'badge-warning'
+    case 'lost':
+      return 'badge-error'
     default:
       return 'badge-ghost'
   }
@@ -31,10 +32,12 @@ const goBack = () => {
 }
 
 const editItem = () => {
-  // Implement edit functionality
+  // Placeholder for future edit functionality
   console.log('Edit item:', props.item.id)
 }
-</script><template>
+</script>
+
+<template>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div class="card bg-base-100 shadow-xl">
       <div class="card-body">
@@ -51,19 +54,20 @@ const editItem = () => {
         <p><strong>Last Updated:</strong> {{ formatDate(item.updatedAt) }}</p>
       </div>
     </div>
+
     <div class="card bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title">Item Status</h2>
         <p class="space-x-2">
-          <strong>Status:</strong>
+          <strong>Current Status:</strong>
           <span class="badge" :class="getStatusBadgeClass(item.itemStatus.status)">
             {{ capitalizeFirstLetter(item.itemStatus.status) }}
           </span>
         </p>
         <p v-if="item.itemStatus.notes"><strong>Notes:</strong> {{ item.itemStatus.notes }}</p>
-        <p><strong>Last Updated:</strong> {{ formatDate(item.itemStatus.updatedAt) }}</p>
       </div>
     </div>
+
     <div class="card bg-base-100 shadow-xl col-span-full">
       <div class="card-body">
         <h2 class="card-title">Validations</h2>
@@ -74,6 +78,7 @@ const editItem = () => {
                 <th>Type</th>
                 <th>Validated</th>
                 <th>Validated At</th>
+                <th>Validated By</th>
               </tr>
             </thead>
             <tbody>
@@ -87,28 +92,55 @@ const editItem = () => {
                     {{ validation.isValidated ? 'Yes' : 'No' }}
                   </span>
                 </td>
-                <td>{{ formatDate(validation.validatedAt) }}</td>
+                <td>
+                  {{
+                    validation.validatedAt ? formatDate(validation.validatedAt) : 'Not validated'
+                  }}
+                </td>
+                <td>{{ validation.user ? validation.user.fullName : 'N/A' }}</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
+
     <div class="card bg-base-100 shadow-xl col-span-full">
-      <div class="card-body">
-        <h2 class="card-title">Associated Sets</h2>
-        <p><strong>Sets Count:</strong> {{ item.sets.length }}</p>
-        <div v-if="item.sets.length > 0">
-          <ul>
-            <li v-for="set in item.sets" :key="set.id">{{ set.name }}</li>
-          </ul>
-        </div>
-        <p v-else>No associated sets found.</p>
-      </div>
+  <div class="card-body">
+    <h2 class="card-title">Associated Sets</h2>
+    <p><strong>Sets Count:</strong> {{ item.sets.length }}</p>
+    <div v-if="item.sets.length > 0">
+      <ul>
+        <li v-for="set in item.sets" :key="set.id" class="mb-2">
+          <Link 
+            :href="`/admin/dashboard/sets/show/${set.id}`"
+            class="link link-primary"
+          >
+            {{ set.name }}
+          </Link>
+          <span
+            class="ml-2 badge"
+            :class="set.isPhotographed ? 'badge-success' : 'badge-warning'"
+          >
+            {{ set.isPhotographed ? 'Photographed' : 'Not Photographed' }}
+          </span>
+        </li>
+      </ul>
     </div>
+    <p v-else>No associated sets found.</p>
+    <div class="mt-4">
+      <Link 
+        href="/admin/dashboard/sets"
+        class="btn btn-outline btn-sm"
+      >
+        View All Sets
+      </Link>
+    </div>
+  </div>
+</div>
   </div>
   <div class="mt-4 space-x-2">
     <button class="btn btn-neutral" @click="goBack">Back to List</button>
-    <button class="btn btn-primary" @click="editItem">Edit Item</button>
+    <Link :href="`/admin/dashboard/items/edit/${item.id}`" class="btn btn-primary">Edit Item</Link>
   </div>
 </template>
