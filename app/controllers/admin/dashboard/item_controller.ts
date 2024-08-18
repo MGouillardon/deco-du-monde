@@ -3,6 +3,7 @@ import { LocationType } from '#enums/location_type'
 import Item from '#models/item'
 import ItemStatus from '#models/item_status'
 import ItemValidation from '#models/item_validation'
+import Set from '#models/set'
 import { storeItemValidator } from '#validators/dashboard/items/store'
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
@@ -74,7 +75,27 @@ export default class ItemController {
     return inertia.render('Admin/Dashboard/Items/Show', { title, item })
   }
 
-  async edit({ params }: HttpContext) {}
+  async edit({ params, inertia }: HttpContext) {
+    const item = await Item.query()
+      .where('id', params.id)
+      .preload('itemStatus')
+      .preload('validations', (query) => {
+        query.preload('user')
+      })
+      .preload('sets')
+      .firstOrFail()
+
+    const title = `Edit item: ${item.name}`
+    const statusOptions = Object.values(ItemStatusType)
+    const allSets = await Set.all()
+
+    return inertia.render('Admin/Dashboard/Items/Edit', {
+      title,
+      item,
+      statusOptions,
+      allSets: allSets.map((set) => ({ id: set.id, name: set.name })),
+    })
+  }
 
   async update({ params, request }: HttpContext) {}
 
