@@ -5,6 +5,7 @@ import ItemStatus from '#models/item_status'
 import ItemValidation from '#models/item_validation'
 import Set from '#models/set'
 import { storeItemValidator } from '#validators/dashboard/items/store'
+import { updateItemValidator } from '#validators/dashboard/items/update'
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 
@@ -97,7 +98,62 @@ export default class ItemController {
     })
   }
 
-  async update({ params, request }: HttpContext) {}
+  async update({ params, request, session, response }: HttpContext) {
+    const { id } = params
+    const validatedData = await request.validateUsing(updateItemValidator)
+
+    await db.transaction(async (trx) => {
+      const item = await this.getItemWithRelations(id, trx)
+      await this.updateItemDetails(item, validatedData, trx)
+      await this.updateOrCreateItemStatus(item, validatedData, trx)
+      await this.syncItemSets(item, validatedData.setIds, trx)
+    })
+
+    session.flash('success', 'Item updated successfully')
+    return response.redirect().toRoute('listing.item')
+  }
+
+  private async getItemWithRelations(id: number, trx: any) {
+    return Item.query({ client: trx })
+      .where('id', id)
+      .preload('itemStatus')
+      .preload('sets')
+      .firstOrFail()
+  }
+
+  private async updateItemDetails(item: Item, data: any) {
+    item.merge({
+      name: data.name,
+      description: data.description,
+      isPhotographedStudio: data.isPhotographedStudio,
+    })
+    await item.save()
+  }
+
+  private async updateOrCreateItemStatus(item: Item, data: any, trx: any) {
+    if (item.itemStatus) {
+      item.itemStatus.merge({
+        status: data.status,
+        notes: data.notes,
+      })
+      await item.itemStatus.save()
+    } else {
+      await ItemStatus.create(
+        {
+          itemId: item.id,
+          status: data.status,
+          notes: data.notes,
+        },
+        { client: trx }
+      )
+    }
+  }
+
+  private async syncItemSets(item: Item, setIds: number[] | undefined) {
+    if (setIds) {
+      await item.related('sets').sync(setIds)
+    }
+  }
 
   async destroy({ params, session, response }: HttpContext) {
     const { id } = params
