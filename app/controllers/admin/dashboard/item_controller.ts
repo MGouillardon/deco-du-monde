@@ -11,7 +11,6 @@ import db from '@adonisjs/lucid/services/db'
 
 export default class ItemController {
   async index({ request, inertia }: HttpContext) {
-    const title = 'Listing items'
     const page = request.input('page', 1)
     const limit = 10
     const items = await Item.query()
@@ -19,12 +18,11 @@ export default class ItemController {
       .preload('validations')
       .preload('sets')
       .paginate(page, limit)
-    return inertia.render('Admin/Dashboard/Items/Index', { title, items })
+    return inertia.render('Admin/Dashboard/Items/Index', { title: 'Listing items', items })
   }
 
   async create({ inertia }: HttpContext) {
-    const title = 'Create a new item'
-    return inertia.render('Admin/Dashboard/Items/Create', { title })
+    return inertia.render('Admin/Dashboard/Items/Create', { title: 'Create a new item' })
   }
 
   async store({ request, session, response }: HttpContext) {
