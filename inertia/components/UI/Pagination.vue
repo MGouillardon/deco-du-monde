@@ -10,7 +10,12 @@ const pages = computed(() => {
 </script>
 
 <template>
-  <div class="join">
+  <div
+    :class="{
+      'join': true,
+      'opacity-0 cursor-default pointer-events-none': pages.length <= 1
+    }"
+  >
     <Link
       v-for="page in pages"
       :key="page"
