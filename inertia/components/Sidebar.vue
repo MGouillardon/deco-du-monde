@@ -11,9 +11,7 @@ import DataIcon from '@/components/icons/DataIcon.vue'
 <template>
   <aside class="drawer-side">
     <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
-    <div
-      class="menu bg-base-100 text-base-content min-h-full w-80 p-0"
-    >
+    <div class="menu bg-base-100 text-base-content min-h-full w-80 p-0">
       <ul class="menu bg-base-100 p-4 mt-16 md:p-6 lg:p-8 gap-4">
         <li>
           <Link href="/admin/dashboard" :class="{ active: $page.url === '/admin/dashboard' }">
@@ -41,7 +39,13 @@ import DataIcon from '@/components/icons/DataIcon.vue'
                   >Items</Link
                 >
               </li>
-              <li><a>Sets</a></li>
+              <li>
+                <Link
+                  href="/admin/dashboard/sets/listing"
+                  :class="{ active: $page.url.startsWith('/admin/dashboard/sets') }"
+                  >Sets</Link
+                >
+              </li>
             </ul>
           </details>
         </li>
