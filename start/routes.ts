@@ -9,7 +9,8 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
-import ItemController from '#controllers/admin/dashboard/item_controller'
+const SetController = () => import('#controllers/admin/dashboard/set_controller')
+const ItemController = () => import('#controllers/admin/dashboard/item_controller')
 const ProfileController = () => import('#controllers/admin/dashboard/profile_controller')
 const PasswordResetController = () => import('#controllers/auth/password_reset_controller')
 const UsersController = () => import('#controllers/admin/dashboard/users_controller')
@@ -81,4 +82,18 @@ router
     router.delete('/delete/:id', [ItemController, 'destroy']).as('delete.item')
   })
   .prefix('admin/dashboard/items')
+  .use(middleware.auth())
+
+router
+  .group(() => {
+    router.get('/', ({ response }) => response.redirect('/admin/dashboard/sets/listing')).as('sets')
+    router.get('/listing', [SetController, 'index']).as('listing.set')
+    router.get('/create', [SetController, 'create']).as('create.set')
+    router.post('/store', [SetController, 'store']).as('store.set')
+    router.get('/show/:id', [SetController, 'show']).as('show.set')
+    router.get('/edit/:id', [SetController, 'edit']).as('edit.set')
+    router.put('/update/:id', [SetController, 'update']).as('update.set')
+    router.delete('/delete/:id', [SetController, 'destroy']).as('delete.set')
+  })
+  .prefix('admin/dashboard/sets')
   .use(middleware.auth())
