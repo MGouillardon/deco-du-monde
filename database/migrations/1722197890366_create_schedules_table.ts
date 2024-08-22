@@ -7,11 +7,22 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').notNullable()
-      table.integer('location_id').unsigned().references('id').inTable('locations')
+      table
+        .integer('location_id')
+        .unsigned()
+        .references('id')
+        .inTable('locations')
+        .onDelete('CASCADE')
       table.dateTime('start_time').notNullable()
       table.dateTime('end_time').notNullable()
       table.enum('type', Object.values(ScheduleType)).notNullable()
-      table.integer('set_id').unsigned().references('id').inTable('sets').nullable()
+      table
+        .integer('set_id')
+        .unsigned()
+        .references('id')
+        .inTable('sets')
+        .onDelete('CASCADE')
+        .nullable()
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
     })

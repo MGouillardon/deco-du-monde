@@ -7,7 +7,7 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').notNullable()
-      table.integer('item_id').unsigned().references('id').inTable('items')
+      table.integer('item_id').unsigned().references('id').inTable('items').onDelete('CASCADE')
       table.enum('status', Object.values(ItemStatusType)).notNullable()
       table.text('notes').nullable()
       table.timestamp('created_at').notNullable()
