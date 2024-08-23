@@ -9,6 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
+const ScheduleController = () => import('#controllers/admin/dashboard/schedule_controller')
 const SetController = () => import('#controllers/admin/dashboard/set_controller')
 const ItemController = () => import('#controllers/admin/dashboard/item_controller')
 const ProfileController = () => import('#controllers/admin/dashboard/profile_controller')
@@ -97,3 +98,21 @@ router
   })
   .prefix('admin/dashboard/sets')
   .use(middleware.auth())
+
+router
+  .group(() => {
+    router
+      .get('/', ({ response }) => response.redirect('/admin/dashboard/schedule/index'))
+      .as('schedules')
+    router.get('/index', [ScheduleController, 'index']).as('index.schedule')
+    router.get('/create', [ScheduleController, 'create']).as('create.schedule')
+    router.post('/store', [ScheduleController, 'store']).as('store.schedule')
+    router.get('/show/:id', [ScheduleController, 'show']).as('show.schedule')
+    router.get('/edit/:id', [ScheduleController, 'edit']).as('edit.schedule')
+    router.put('/update/:id', [ScheduleController, 'update']).as('update.schedule')
+    router.delete('/delete/:id', [ScheduleController, 'destroy']).as('delete.schedule')
+  })
+  .prefix('admin/dashboard/schedules')
+  .use(middleware.auth())
+
+router.get('schedule/fetch-events', [ScheduleController, 'fetchEvents']).as('schedule.fetchEvents')
