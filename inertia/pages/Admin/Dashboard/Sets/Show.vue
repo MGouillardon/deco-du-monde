@@ -8,6 +8,11 @@ const props = defineProps({
 const formatDate = (dateString) => {
   return new Date(dateString).toLocaleString()
 }
+
+const capitalizeFirstLetter = (text) => {
+  if (!text) return ''
+  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()
+}
 </script>
 
 <template>
@@ -78,7 +83,7 @@ const formatDate = (dateString) => {
             </thead>
             <tbody>
               <tr v-for="validation in set.validations" :key="validation.id">
-                <td>{{ validation.type }}</td>
+                <td>{{ capitalizeFirstLetter(validation.type) }}</td>
                 <td>
                   <span
                     class="badge"
