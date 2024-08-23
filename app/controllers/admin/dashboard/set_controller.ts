@@ -42,7 +42,7 @@ export default class SetController {
         query.preload('user')
       })
       .firstOrFail()
-    return inertia.render('Admin/Dashboard/Sets/Show', { set })
+    return inertia.render('Admin/Dashboard/Sets/Show', { set, title: `Show set: ${set.name}` })
   }
 
   async edit({ params, inertia }: HttpContext) {
