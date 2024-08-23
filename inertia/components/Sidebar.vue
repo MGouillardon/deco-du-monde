@@ -26,7 +26,12 @@ import DataIcon from '@/components/icons/DataIcon.vue'
           >
         </li>
         <li>
-          <a><CalendarIcon />Calendar</a>
+          <Link
+            href="/admin/dashboard/schedules/index"
+            :class="{ active: $page.url.startsWith('/admin/dashboard/schedules') }"
+          >
+            <CalendarIcon />Schedule
+          </Link>
         </li>
         <li>
           <details>
