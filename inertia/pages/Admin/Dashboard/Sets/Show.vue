@@ -28,19 +28,41 @@ const formatDate = (dateString) => {
       </div>
     </div>
 
-    <div class="card bg-base-100 shadow-xl">
-      <div class="card-body">
-        <h2 class="card-title">Associated Items</h2>
-        <ul>
-          <li v-for="item in set.items" :key="item.id" class="mb-2">
-            <Link :href="`/admin/dashboard/items/show/${item.id}`" class="link link-primary">
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title flex justify-between items-center">
+        Associated Items
+        <span class="badge badge-secondary badge-lg">{{ set.items.length }}</span>
+      </h2>
+      <div v-if="set.items.length > 0" class="mt-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+          <Link 
+            v-for="item in set.items" 
+            :key="item.id"
+            :href="`/admin/dashboard/items/show/${item.id}`"
+            class="btn btn-outline btn-sm text-left normal-case justify-start hover:no-underline"
+          >
+            <div class="truncate">
               {{ item.name }}
-            </Link>
-          </li>
-        </ul>
+            </div>
+            <div v-if="item.itemStatus" class="ml-auto">
+              <span 
+                class="badge badge-sm" 
+                :class="{
+                  'badge-success': item.itemStatus.status === 'NORMAL',
+                  'badge-warning': item.itemStatus.status === 'DAMAGED',
+                  'badge-error': item.itemStatus.status === 'LOST'
+                }"
+              >
+                {{ item.itemStatus.status }}
+              </span>
+            </div>
+          </Link>
+        </div>
       </div>
+      <p v-else class="text-sm text-base-content/70 italic">No associated items found.</p>
     </div>
-
+  </div>
     <div class="card bg-base-100 shadow-xl col-span-full">
       <div class="card-body">
         <h2 class="card-title">Validations</h2>

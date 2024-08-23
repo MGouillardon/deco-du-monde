@@ -30,11 +30,6 @@ const getStatusBadgeClass = (status) => {
 const goBack = () => {
   window.history.back()
 }
-
-const editItem = () => {
-  // Placeholder for future edit functionality
-  console.log('Edit item:', props.item.id)
-}
 </script>
 
 <template>
@@ -105,39 +100,33 @@ const editItem = () => {
       </div>
     </div>
 
-    <div class="card bg-base-100 shadow-xl col-span-full">
-  <div class="card-body">
-    <h2 class="card-title">Associated Sets</h2>
-    <p><strong>Sets Count:</strong> {{ item.sets.length }}</p>
-    <div v-if="item.sets.length > 0">
-      <ul>
-        <li v-for="set in item.sets" :key="set.id" class="mb-2">
-          <Link 
-            :href="`/admin/dashboard/sets/show/${set.id}`"
-            class="link link-primary"
-          >
-            {{ set.name }}
-          </Link>
-          <span
-            class="ml-2 badge"
-            :class="set.isPhotographed ? 'badge-success' : 'badge-warning'"
-          >
-            {{ set.isPhotographed ? 'Photographed' : 'Not Photographed' }}
-          </span>
-        </li>
-      </ul>
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title flex justify-between items-center">
+          Associated Sets
+          <span class="badge badge-primary badge-lg">{{ item.sets.length }}</span>
+        </h2>
+        <div v-if="item.sets.length > 0" class="mt-4">
+          <div class="flex flex-wrap gap-2">
+            <Link
+              v-for="set in item.sets"
+              :key="set.id"
+              :href="`/admin/dashboard/sets/show/${set.id}`"
+              class="btn btn-sm btn-outline gap-2 hover:no-underline"
+              :class="set.isPhotographed ? 'btn-success' : 'btn-warning'"
+            >
+              <span class="truncate max-w-[150px]">{{ set.name }}</span>
+              <span v-if="set.isPhotographed" class="tooltip" data-tip="Photographed"> 📸 </span>
+              <span v-else class="tooltip" data-tip="Not Photographed"> 📷 </span>
+            </Link>
+          </div>
+        </div>
+        <p v-else class="text-sm text-base-content/70 italic">No associated sets found.</p>
+        <div class="card-actions justify-end mt-4">
+          <Link href="/admin/dashboard/sets" class="btn btn-primary btn-sm"> View All Sets </Link>
+        </div>
+      </div>
     </div>
-    <p v-else>No associated sets found.</p>
-    <div class="mt-4">
-      <Link 
-        href="/admin/dashboard/sets"
-        class="btn btn-outline btn-sm"
-      >
-        View All Sets
-      </Link>
-    </div>
-  </div>
-</div>
   </div>
   <div class="mt-4 space-x-2">
     <button class="btn btn-neutral" @click="goBack">Back to List</button>
