@@ -10,19 +10,25 @@ const props = defineProps({
     type: String,
     default: 'info',
   },
+  show: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const getAlertClass = computed(() => {
+const alertClass = computed(() => {
   return props.type === 'success' ? 'alert-success' : 'alert-info'
 })
 </script>
 
 <template>
-  <div class="toast toast-bottom toast-end z-50">
-    <div :class="['alert', getAlertClass]" role="alert">
-      <span>{{ message }}</span>
+  <transition name="slide">
+    <div v-if="show" class="toast toast-bottom toast-end z-50">
+      <div :class="['alert', alertClass]" role="alert">
+        <span>{{ message }}</span>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <style scoped>
