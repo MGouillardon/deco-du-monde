@@ -18,7 +18,7 @@ const getAlertClass = computed(() => {
 </script>
 
 <template>
-  <div class="toast toast-bottom toast-end">
+  <div class="toast toast-bottom toast-end z-50">
     <div :class="['alert', getAlertClass]" role="alert">
       <span>{{ message }}</span>
     </div>
