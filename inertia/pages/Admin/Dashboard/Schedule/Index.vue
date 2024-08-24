@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useForm } from '@inertiajs/vue3'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -35,6 +36,7 @@ const calendarOptions = computed(() => ({
   selectable: true,
   events: props.events,
   eventClick: handleEventClick,
+  eventChange: handleEventChange,
   select: handleDateSelect,
   height: 'auto',
   eventDisplay: 'block',
@@ -51,6 +53,12 @@ const calendarOptions = computed(() => ({
   },
 }))
 
+const form = useForm({
+  id: null,
+  start: '',
+  end: '',
+})
+
 const formattedDate = computed(() => {
   const options = { month: 'long', year: 'numeric' }
   return currentDate.value.toLocaleDateString('en-EN', options)
@@ -65,8 +73,9 @@ const checkIfToday = () => {
 
     switch (currentView.value) {
       case VIEW_MONTH:
-        isTodayActive.value = today.getFullYear() === currentStart.getFullYear() && 
-                              today.getMonth() === currentStart.getMonth()
+        isTodayActive.value =
+          today.getFullYear() === currentStart.getFullYear() &&
+          today.getMonth() === currentStart.getMonth()
         break
       case VIEW_WEEK:
         isTodayActive.value = today >= currentStart && today < currentEnd
@@ -86,6 +95,27 @@ const handleEventClick = (info) => {
 
 const handleDateSelect = (info) => {
   console.log('Date range selected:', info.startStr, 'to', info.endStr)
+}
+
+const handleEventChange = (changeInfo) => {
+  form.id = changeInfo.event.id
+  form.start = changeInfo.event.start.toISOString()
+  form.end = changeInfo.event.end.toISOString()
+
+  form.put(`/admin/dashboard/schedules/update/${form.id}`, {
+    preserveState: true,
+    preserveScroll: true,
+    onSuccess: () => {
+      // Optionally show a success message
+      console.log('Event updated successfully')
+    },
+    onError: (errors) => {
+      // Revert the change if the server update fails
+      changeInfo.revert()
+      // Optionally show an error message
+      console.error('Failed to update event', errors)
+    },
+  })
 }
 
 const changeView = (viewName) => {

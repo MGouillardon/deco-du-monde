@@ -114,5 +114,3 @@ router
   })
   .prefix('admin/dashboard/schedules')
   .use(middleware.auth())
-
-router.get('schedule/fetch-events', [ScheduleController, 'fetchEvents']).as('schedule.fetchEvents')

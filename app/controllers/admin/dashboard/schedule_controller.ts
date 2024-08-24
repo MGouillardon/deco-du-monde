@@ -1,5 +1,6 @@
 import { HttpContext } from '@adonisjs/core/http'
 import Schedule from '#models/schedule'
+import { DateTime } from 'luxon'
 
 export default class ScheduleController {
   async index({ inertia }: HttpContext) {
@@ -33,7 +34,20 @@ export default class ScheduleController {
 
   async edit({ inertia, params }: HttpContext) {}
 
-  async update({ request, response, params }: HttpContext) {}
+  async update({ request, response, params, session }: HttpContext) {
+    const { id } = params
+    const { start, end } = request.only(['start', 'end'])
+
+    const schedule = await Schedule.findOrFail(id)
+
+    schedule.startTime = DateTime.fromISO(start)
+    schedule.endTime = DateTime.fromISO(end)
+
+    await schedule.save()
+
+    session.flash('success', 'Event updated successfully')
+    return response.redirect().toRoute('index.schedule')
+  }
 
   async destroy({ response, params }: HttpContext) {}
 }
