@@ -39,10 +39,10 @@ const getStatusColor = (status) => {
 <template>
   <!-- Overview Statistics -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <div v-for="(value, key) in stats" :key="key" class="card bg-base-100 shadow-xl">
-      <div class="card-body">
-        <div class="card-title">{{ formatTitle(key) }}</div>
-        <p>{{ value }}</p>
+    <div v-for="(value, key) in stats" :key="key" class="stats bg-base-100 shadow-xl">
+      <div class="stat">
+        <div class="stat-title">{{ formatTitle(key) }}</div>
+        <p class="stat-value">{{ value }}</p>
       </div>
     </div>
   </div>
@@ -130,7 +130,7 @@ const getStatusColor = (status) => {
             New Item
           </Link>
           <Link href="/admin/dashboard/sets/create" class="btn btn-primary btn-sm"> New Set </Link>
-          <Link href="/admin/dashboard/schedule/create" class="btn btn-primary btn-sm">
+          <Link href="/admin/dashboard/schedules/create" class="btn btn-primary btn-sm">
             Schedule Shoot
           </Link>
         </div>
