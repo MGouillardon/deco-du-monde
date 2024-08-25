@@ -6,7 +6,7 @@ const props = defineProps({
   title: String,
   stats: Object,
   recentActivity: Object,
-  upcomingSchedule: Array,
+  upcomingEvent: Array,
   statusOverview: Object,
 })
 
@@ -73,20 +73,20 @@ const getStatusColor = (status) => {
       </div>
     </div>
 
-    <!-- Upcoming Schedule -->
+    <!-- Upcoming Event -->
     <div class="card bg-base-100 shadow-xl">
       <div class="card-body">
-        <h2 class="card-title">Upcoming Schedule</h2>
+        <h2 class="card-title">Upcoming Event</h2>
         <ul>
-          <li v-for="event in upcomingSchedule" :key="event.id" class="mb-4">
+          <li v-for="event in upcomingEvent" :key="event.id" class="mb-4">
             <div class="font-semibold">{{ formatDate(event.startTime) }}</div>
             <div>{{ event.set ? `Shoot: ${event.set.name}` : 'Preparation' }}</div>
             <div class="text-sm text-base-content/70">Location: {{ event.location.name }}</div>
           </li>
         </ul>
         <div class="card-actions justify-end">
-          <Link href="/admin/dashboard/schedules/index" class="btn btn-primary btn-sm">
-            View Full Schedule
+          <Link href="/admin/dashboard/events/index" class="btn btn-primary btn-sm">
+            View Full Event
           </Link>
         </div>
       </div>
@@ -130,8 +130,8 @@ const getStatusColor = (status) => {
             New Item
           </Link>
           <Link href="/admin/dashboard/sets/create" class="btn btn-primary btn-sm"> New Set </Link>
-          <Link href="/admin/dashboard/schedules/create" class="btn btn-primary btn-sm">
-            Schedule Shoot
+          <Link href="/admin/dashboard/events/create" class="btn btn-primary btn-sm">
+            Event Shoot
           </Link>
         </div>
       </div>

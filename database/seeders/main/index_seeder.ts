@@ -16,8 +16,8 @@ export default class IndexSeeder extends BaseSeeder {
     await this.runSeeder(await import('#database/seeders/item_set_seeder'))
     await this.runSeeder(await import('#database/seeders/item_validation_seeder'))
     await this.runSeeder(await import('#database/seeders/set_validation_seeder'))
-    await this.runSeeder(await import('#database/seeders/schedule_seeder'))
-    await this.runSeeder(await import('#database/seeders/schedule_assignment_seeder'))
+    await this.runSeeder(await import('#database/seeders/event_seeder'))
+    await this.runSeeder(await import('#database/seeders/event_assignment_seeder'))
     await this.runSeeder(await import('#database/seeders/workday_seeder'))
   }
 }

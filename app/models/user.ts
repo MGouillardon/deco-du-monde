@@ -7,8 +7,8 @@ import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import Role from '#models/role'
 import Roles from '#enums/roles'
 import PasswordResetToken from '#models/password_reset_token'
-import Workday from './workday.js'
-import ScheduleAssignment from './schedule_assignment.js'
+import Workday from '#models/workday'
+import EventAssignment from '#models/event_assignment'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -49,8 +49,8 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @hasMany(() => Workday)
   declare workdays: HasMany<typeof Workday>
 
-  @hasMany(() => ScheduleAssignment)
-  declare scheduleAssignments: HasMany<typeof ScheduleAssignment>
+  @hasMany(() => EventAssignment)
+  declare eventAssignments: HasMany<typeof EventAssignment>
 
   @computed()
   get roleName() {

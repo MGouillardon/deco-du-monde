@@ -8,7 +8,7 @@ const props = defineProps({
   locations: Array,
   sets: Array,
   users: Array,
-  scheduleTypes: Object,
+  eventTypes: Object,
   errors: Object,
 })
 
@@ -49,9 +49,8 @@ const removeUser = (userId) => {
 }
 
 const showSetSelection = computed(() => {
-  return form.type === props.scheduleTypes.SET_SHOOT || form.type === props.scheduleTypes.SET_REMOVAL
+  return form.type === props.eventTypes.SET_SHOOT || form.type === props.eventTypes.SET_REMOVAL
 })
-
 
 const handleTypeChange = () => {
   if (!showSetSelection.value) {
@@ -59,12 +58,15 @@ const handleTypeChange = () => {
   }
 }
 
-const formatScheduleType = (type) => {
-  return type.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ')
+const formatEventType = (type) => {
+  return type
+    .split('_')
+    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(' ')
 }
 
 const submit = () => {
-  form.post('/admin/dashboard/schedules/store')
+  form.post('/admin/dashboard/events/store')
 }
 </script>
 
@@ -75,12 +77,7 @@ const submit = () => {
         <label for="location" class="label">
           <span class="label-text">Location</span>
         </label>
-        <select
-          id="location"
-          v-model="form.locationId"
-          class="select select-bordered"
-          required
-        >
+        <select id="location" v-model="form.locationId" class="select select-bordered" required>
           <option value="">Select a location</option>
           <option v-for="location in locations" :key="location.id" :value="location.id">
             {{ location.name }}
@@ -119,7 +116,7 @@ const submit = () => {
 
       <div class="form-control">
         <label for="type" class="label">
-          <span class="label-text">Schedule Type</span>
+          <span class="label-text">Event Type</span>
         </label>
         <select
           id="type"
@@ -129,8 +126,8 @@ const submit = () => {
           required
         >
           <option value="">Select a type</option>
-          <option v-for="type in Object.values(props.scheduleTypes)" :key="type" :value="type">
-            {{ formatScheduleType(type) }}
+          <option v-for="type in Object.values(props.eventTypes)" :key="type" :value="type">
+            {{ formatEventType(type) }}
           </option>
         </select>
         <ErrorFieldMessage v-if="errors?.type" :error="errors.type" class="mt-1" />
@@ -140,11 +137,7 @@ const submit = () => {
         <label for="set" class="label">
           <span class="label-text">Set</span>
         </label>
-        <select
-          id="set"
-          v-model="form.setId"
-          class="select select-bordered"
-        >
+        <select id="set" v-model="form.setId" class="select select-bordered">
           <option value="">Select a set</option>
           <option v-for="set in sets" :key="set.id" :value="set.id">
             {{ set.name }}
@@ -181,7 +174,7 @@ const submit = () => {
 
       <div class="form-control mt-6">
         <button type="submit" class="btn btn-primary" :disabled="form.processing">
-          {{ form.processing ? 'Creating...' : 'Create Schedule' }}
+          {{ form.processing ? 'Creating...' : 'Create Event' }}
         </button>
       </div>
     </form>

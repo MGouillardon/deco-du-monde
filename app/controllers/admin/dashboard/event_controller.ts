@@ -1,34 +1,34 @@
 import { HttpContext } from '@adonisjs/core/http'
-import Schedule from '#models/schedule'
+import Event from '#models/event'
 import { DateTime } from 'luxon'
 import Location from '#models/location'
 import User from '#models/user'
-import { ScheduleType } from '#enums/schedule_type'
-import ScheduleAssignment from '#models/schedule_assignment'
-import { storeScheduleValidator } from '#validators/dashboard/schedule/store'
+import { EventType } from '#enums/event_type'
+import EventAssignment from '#models/event_assignment'
+import { storeEventValidator } from '#validators/dashboard/event/store'
 import Set from '#models/set'
 
-export default class ScheduleController {
+export default class EventController {
   async index({ inertia }: HttpContext) {
     const events = await this.fetchAllEvents()
 
-    return inertia.render('Admin/Dashboard/Schedule/Index', {
-      title: 'Schedule',
+    return inertia.render('Admin/Dashboard/Event/Index', {
+      title: 'Calendar',
       events: events,
     })
   }
 
   private async fetchAllEvents() {
-    const schedules = await Schedule.query().preload('location').preload('set')
+    const events = await Event.query().preload('location').preload('set')
 
-    return schedules.map((schedule) => ({
-      id: schedule.id,
-      title: schedule.set ? `Shoot: ${schedule.set.name}` : 'Preparation',
-      start: schedule.startTime.toISO(),
-      end: schedule.endTime.toISO(),
+    return events.map((event) => ({
+      id: event.id,
+      title: event.set ? `Shoot: ${event.set.name}` : 'Preparation',
+      start: event.startTime.toISO(),
+      end: event.endTime.toISO(),
       extendedProps: {
-        location: schedule.location.name,
-        type: schedule.type,
+        location: event.location.name,
+        type: event.type,
       },
     }))
   }
@@ -36,24 +36,24 @@ export default class ScheduleController {
     const locations = await Location.all()
     const sets = await Set.all()
     const users = await User.all()
-    const scheduleTypes = Object.fromEntries(
-      Object.entries(ScheduleType).map(([key, value]) => [key, value])
+    const eventTypes = Object.fromEntries(
+      Object.entries(EventType).map(([key, value]) => [key, value])
     )
 
-    return inertia.render('Admin/Dashboard/Schedule/Create', {
+    return inertia.render('Admin/Dashboard/Event/Create', {
       title: 'Create an Event',
       locations,
       sets,
       users,
-      scheduleTypes,
+      eventTypes,
     })
   }
 
   async store({ request, response, session }: HttpContext) {
-    const validatedData = await request.validateUsing(storeScheduleValidator)
+    const validatedData = await request.validateUsing(storeEventValidator)
 
     try {
-      const schedule = await Schedule.create({
+      const event = await Event.create({
         locationId: validatedData.locationId,
         startTime: DateTime.fromISO(validatedData.startTime.toISOString()),
         endTime: DateTime.fromISO(validatedData.endTime.toISOString()),
@@ -62,16 +62,16 @@ export default class ScheduleController {
       })
 
       if (validatedData.userIds && validatedData.userIds.length > 0) {
-        await ScheduleAssignment.createMany(
+        await EventAssignment.createMany(
           validatedData.userIds.map((userId: number) => ({
-            scheduleId: schedule.id,
+            eventId: event.id,
             userId,
           }))
         )
       }
 
       session.flash('success', 'Event created successfully')
-      return response.redirect().toRoute('index.schedule')
+      return response.redirect().toRoute('index.event')
     } catch (error) {
       console.error('Error creating event:', error)
       session.flash('error', 'Failed to create event. Please try again.')
@@ -87,15 +87,15 @@ export default class ScheduleController {
     const { id } = params
     const { start, end } = request.only(['start', 'end'])
 
-    const schedule = await Schedule.findOrFail(id)
+    const event = await Event.findOrFail(id)
 
-    schedule.startTime = DateTime.fromISO(start)
-    schedule.endTime = DateTime.fromISO(end)
+    event.startTime = DateTime.fromISO(start)
+    event.endTime = DateTime.fromISO(end)
 
-    await schedule.save()
+    await event.save()
 
     session.flash('success', 'Event updated successfully')
-    return response.redirect().toRoute('index.schedule')
+    return response.redirect().toRoute('index.event')
   }
 
   async destroy({ response, params }: HttpContext) {}

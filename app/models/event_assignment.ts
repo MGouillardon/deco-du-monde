@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon'
 import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
-import User from './user.js'
+import User from '#models/user'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-import Schedule from './schedule.js'
+import Event from '#models/event'
 
-export default class ScheduleAssignment extends BaseModel {
+export default class EventAssignment extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
@@ -12,7 +12,7 @@ export default class ScheduleAssignment extends BaseModel {
   declare userId: number
 
   @column()
-  declare scheduleId: number
+  declare eventId: number
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -23,6 +23,6 @@ export default class ScheduleAssignment extends BaseModel {
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
 
-  @belongsTo(() => Schedule)
-  declare schedule: BelongsTo<typeof Schedule>
+  @belongsTo(() => Event)
+  declare event: BelongsTo<typeof Event>
 }

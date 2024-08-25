@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany, hasOne, manyToMany } from '@adonisjs/lucid/orm'
 import type { HasMany, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
-import ItemStatus from './item_status.js'
-import ItemValidation from './item_validation.js'
+import ItemStatus from '#models/item_status'
+import ItemValidation from '#models/item_validation'
 import Set from '#models/set'
 
 export default class Item extends BaseModel {

@@ -1,18 +1,18 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
-import Schedule from '#models/schedule'
-import ScheduleAssignment from '#models/schedule_assignment'
+import Event from '#models/event'
+import EventAssignment from '#models/event_assignment'
 import Workday from '#models/workday'
 
 export default class WorkdaySeeder extends BaseSeeder {
   async run() {
-    const schedules = await Schedule.all()
+    const events = await Event.all()
 
-    for (const schedule of schedules) {
-      const assignments = await ScheduleAssignment.query().where('scheduleId', schedule.id)
+    for (const event of events) {
+      const assignments = await EventAssignment.query().where('eventId', event.id)
 
       for (const assignment of assignments) {
         await Workday.create({
-          scheduleId: schedule.id,
+          eventId: event.id,
           userId: assignment.userId,
         })
       }

@@ -9,7 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
-const ScheduleController = () => import('#controllers/admin/dashboard/schedule_controller')
+import EventController from '#controllers/admin/dashboard/event_controller'
 const SetController = () => import('#controllers/admin/dashboard/set_controller')
 const ItemController = () => import('#controllers/admin/dashboard/item_controller')
 const ProfileController = () => import('#controllers/admin/dashboard/profile_controller')
@@ -102,15 +102,15 @@ router
 router
   .group(() => {
     router
-      .get('/', ({ response }) => response.redirect('/admin/dashboard/schedule/index'))
-      .as('schedules')
-    router.get('/index', [ScheduleController, 'index']).as('index.schedule')
-    router.get('/create', [ScheduleController, 'create']).as('create.schedule')
-    router.post('/store', [ScheduleController, 'store']).as('store.schedule')
-    router.get('/show/:id', [ScheduleController, 'show']).as('show.schedule')
-    router.get('/edit/:id', [ScheduleController, 'edit']).as('edit.schedule')
-    router.put('/update/:id', [ScheduleController, 'update']).as('update.schedule')
-    router.delete('/delete/:id', [ScheduleController, 'destroy']).as('delete.schedule')
+      .get('/', ({ response }) => response.redirect('/admin/dashboard/events/index'))
+      .as('events')
+    router.get('/index', [EventController, 'index']).as('index.event')
+    router.get('/create', [EventController, 'create']).as('create.event')
+    router.post('/store', [EventController, 'store']).as('store.event')
+    router.get('/show/:id', [EventController, 'show']).as('show.event')
+    router.get('/edit/:id', [EventController, 'edit']).as('edit.event')
+    router.put('/update/:id', [EventController, 'update']).as('update.event')
+    router.delete('/delete/:id', [EventController, 'destroy']).as('delete.event')
   })
-  .prefix('admin/dashboard/schedules')
+  .prefix('admin/dashboard/events')
   .use(middleware.auth())

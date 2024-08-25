@@ -1,8 +1,8 @@
-import { ScheduleType } from '#enums/schedule_type'
+import { EventType } from '#enums/event_type'
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'schedules'
+  protected tableName = 'events'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
@@ -15,7 +15,7 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
       table.dateTime('start_time').notNullable()
       table.dateTime('end_time').notNullable()
-      table.enum('type', Object.values(ScheduleType)).notNullable()
+      table.enum('type', Object.values(EventType)).notNullable()
       table
         .integer('set_id')
         .unsigned()

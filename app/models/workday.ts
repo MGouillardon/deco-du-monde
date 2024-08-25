@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
-import Schedule from '#models/schedule'
+import Event from '#models/event'
 
 export default class Workday extends BaseModel {
   @column({ isPrimary: true })
@@ -12,7 +12,7 @@ export default class Workday extends BaseModel {
   declare userId: number
 
   @column()
-  declare scheduleId: number
+  declare eventId: number
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -23,6 +23,6 @@ export default class Workday extends BaseModel {
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
 
-  @belongsTo(() => Schedule)
-  declare schedule: BelongsTo<typeof Schedule>
+  @belongsTo(() => Event)
+  declare event: BelongsTo<typeof Event>
 }

@@ -3,7 +3,7 @@ import { BaseModel, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
 import type { HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import Item from '#models/item'
 import SetValidation from '#models/set_validation'
-import Schedule from '#models/schedule'
+import Event from '#models/event'
 
 export default class Set extends BaseModel {
   @column({ isPrimary: true })
@@ -32,6 +32,6 @@ export default class Set extends BaseModel {
   @hasMany(() => SetValidation)
   declare validations: HasMany<typeof SetValidation>
 
-  @hasMany(() => Schedule)
-  declare schedules: HasMany<typeof Schedule>
+  @hasMany(() => Event)
+  declare events: HasMany<typeof Event>
 }

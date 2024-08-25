@@ -1,7 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Item from '#models/item'
 import Set from '#models/set'
-import Schedule from '#models/schedule'
+import Event from '#models/event'
 import { DateTime } from 'luxon'
 import db from '@adonisjs/lucid/services/db'
 
@@ -10,7 +10,7 @@ export default class RenderController {
     // Fetch overview statistics
     const totalItems = await Item.query().count('* as total')
     const totalSets = await Set.query().count('* as total')
-    const upcomingShoots = await Schedule.query()
+    const upcomingShoots = await Event.query()
       .where('start_time', '>', DateTime.now().toSQL())
       .count('* as total')
     const itemsToPhotograph = await Item.query()
@@ -25,8 +25,8 @@ export default class RenderController {
       .limit(5)
     const recentSets = await Set.query().orderBy('created_at', 'desc').limit(5)
 
-    // Fetch upcoming schedule
-    const upcomingSchedule = await Schedule.query()
+    // Fetch upcoming event
+    const upcomingEvent = await Event.query()
       .where('start_time', '>', DateTime.now().toSQL())
       .orderBy('start_time', 'asc')
       .preload('location')
@@ -69,7 +69,7 @@ export default class RenderController {
         items: recentItems,
         sets: recentSets,
       },
-      upcomingSchedule,
+      upcomingEvent,
       statusOverview: {
         itemStatus: itemStatusCounts,
         setPhotographed: setPhotographedCounts,

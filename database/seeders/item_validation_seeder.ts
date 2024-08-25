@@ -3,7 +3,7 @@ import Item from '#models/item'
 import User from '#models/user'
 import ItemValidation from '#models/item_validation'
 import { DateTime } from 'luxon'
-import { ScheduleType } from '#enums/schedule_type'
+import { EventType } from '#enums/event_type'
 
 export default class ItemValidationSeeder extends BaseSeeder {
   async run() {
@@ -14,9 +14,9 @@ export default class ItemValidationSeeder extends BaseSeeder {
     const studioItems = await Item.query().where('isPhotographedStudio', true)
 
     const photographedSetItems = await Item.query().whereHas('sets', (setQuery) => {
-      setQuery.whereHas('schedules', (scheduleQuery) => {
-        scheduleQuery
-          .where('type', ScheduleType.SET_SHOOT)
+      setQuery.whereHas('events', (eventQuery) => {
+        eventQuery
+          .where('type', EventType.SET_SHOOT)
           .where('start_time', '<=', DateTime.now().toSQL())
       })
     })

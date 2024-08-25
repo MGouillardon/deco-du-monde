@@ -84,7 +84,7 @@ const itemsNeedingInSituPhoto = computed(() =>
   props.items.data.filter((item) => item.sets.length === 0)
 )
 
-const scheduleStudioPhoto = (item) => {}
+const eventStudioPhoto = (item) => {}
 
 const validatePhoto = (item) => {}
 
@@ -112,9 +112,7 @@ const assignToSet = (item) => {}
             class="flex justify-between items-center mb-2"
           >
             <span>{{ item.name }}</span>
-            <button @click="scheduleStudioPhoto(item)" class="btn btn-sm btn-accent">
-              Schedule
-            </button>
+            <button @click="eventStudioPhoto(item)" class="btn btn-sm btn-accent">Event</button>
           </li>
         </ul>
       </div>

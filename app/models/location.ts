@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
-import Schedule from './schedule.js'
+import Event from '#models/event'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 
 export default class Location extends BaseModel {
@@ -22,6 +22,6 @@ export default class Location extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  @hasMany(() => Schedule)
-  declare schedules: HasMany<typeof Schedule>
+  @hasMany(() => Event)
+  declare events: HasMany<typeof Event>
 }
