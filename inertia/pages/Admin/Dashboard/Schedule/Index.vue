@@ -149,6 +149,29 @@ const handleDatesSet = (dateInfo) => {
 </script>
 
 <template>
+  <div class="relative">
+    <button
+      class="fixed bottom-4 right-9 w-14 h-14 bg-primary hover:bg-primary-focus text-primary-content rounded-full shadow-lg flex items-center justify-center transition-colors duration-300 group z-50"
+      @click="() => $inertia.visit('/admin/dashboard/schedules/create')"
+      aria-label="Create Event"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-8 w-8"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      <span
+        class="absolute bottom-full right-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-sm py-1 px-2 rounded"
+      >
+        Create Event
+      </span>
+    </button>
+  </div>
+
   <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4">
     <div class="flex items-center sm:justify-between gap-2">
       <button
@@ -228,23 +251,19 @@ const handleDatesSet = (dateInfo) => {
   @apply py-2;
 }
 
-/* Supprime les bordures par défaut */
 .calendar-custom :deep(.fc-timegrid-slot) {
   border: none !important;
 }
 
-/* Ajoute un divider DaisyUI */
 .calendar-custom :deep(.fc-timegrid-slot-lane)::after {
   content: '';
   @apply block w-full h-px bg-base-300;
 }
 
-/* Style pour les labels d'heure */
 .calendar-custom :deep(.fc-timegrid-slot-label) {
   @apply text-base-content opacity-70;
 }
 
-/* Supprime la bordure entre les jours dans la vue semaine */
 .calendar-custom :deep(.fc-timegrid-col) {
   border-left: none !important;
 }
