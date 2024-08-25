@@ -46,6 +46,8 @@ const calendarOptions = computed(() => ({
     meridiem: 'short',
   },
   datesSet: handleDatesSet,
+  slotMinTime: '08:00:00',
+  slotMaxTime: '20:00:00',
   views: {
     [VIEW_DAY]: {
       dayHeaderFormat: { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' },
@@ -182,16 +184,24 @@ const handleDatesSet = (dateInfo) => {
 </template>
 
 <style scoped>
+.calendar-custom {
+  --fc-border-color: hsl(var(--b3));
+}
+
+.calendar-custom :deep(.fc-col-header) {
+  @apply bg-base-200 rounded-md;
+}
+
 .calendar-custom :deep(.fc-toolbar-title) {
-  @apply text-lg font-bold text-base-content;
+  @apply text-lg font-bold;
 }
 
-button:focus {
-  @apply outline-none ring-0;
+.calendar-custom :deep(.fc-button) {
+  @apply btn btn-sm btn-ghost;
 }
 
-button:disabled {
-  @apply pointer-events-none cursor-default;
+.calendar-custom :deep(.fc-button-active) {
+  @apply btn-neutral;
 }
 
 .calendar-custom :deep(.fc-event) {
@@ -211,10 +221,31 @@ button:disabled {
 }
 
 .calendar-custom :deep(.fc-day-today) {
-  @apply bg-base-200;
+  background-color: hsl(var(--b2)) !important;
 }
 
 .calendar-custom :deep(.fc-col-header-cell) {
   @apply py-2;
+}
+
+/* Supprime les bordures par défaut */
+.calendar-custom :deep(.fc-timegrid-slot) {
+  border: none !important;
+}
+
+/* Ajoute un divider DaisyUI */
+.calendar-custom :deep(.fc-timegrid-slot-lane)::after {
+  content: '';
+  @apply block w-full h-px bg-base-300;
+}
+
+/* Style pour les labels d'heure */
+.calendar-custom :deep(.fc-timegrid-slot-label) {
+  @apply text-base-content opacity-70;
+}
+
+/* Supprime la bordure entre les jours dans la vue semaine */
+.calendar-custom :deep(.fc-timegrid-col) {
+  border-left: none !important;
 }
 </style>
