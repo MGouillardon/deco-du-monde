@@ -1,6 +1,12 @@
 import { HttpContext } from '@adonisjs/core/http'
 import Schedule from '#models/schedule'
 import { DateTime } from 'luxon'
+import Location from '#models/location'
+import User from '#models/user'
+import { ScheduleType } from '#enums/schedule_type'
+import ScheduleAssignment from '#models/schedule_assignment'
+import { storeScheduleValidator } from '#validators/dashboard/schedule/store'
+import Set from '#models/set'
 
 export default class ScheduleController {
   async index({ inertia }: HttpContext) {
@@ -26,9 +32,52 @@ export default class ScheduleController {
       },
     }))
   }
-  async create({ inertia }: HttpContext) {}
+  async create({ inertia }: HttpContext) {
+    const locations = await Location.all()
+    const sets = await Set.all()
+    const users = await User.all()
+    const scheduleTypes = Object.fromEntries(
+      Object.entries(ScheduleType).map(([key, value]) => [key, value])
+    )
 
-  async store({ request, response }: HttpContext) {}
+    return inertia.render('Admin/Dashboard/Schedule/Create', {
+      title: 'Create an Event',
+      locations,
+      sets,
+      users,
+      scheduleTypes,
+    })
+  }
+
+  async store({ request, response, session }: HttpContext) {
+    const validatedData = await request.validateUsing(storeScheduleValidator)
+
+    try {
+      const schedule = await Schedule.create({
+        locationId: validatedData.locationId,
+        startTime: DateTime.fromISO(validatedData.startTime.toISOString()),
+        endTime: DateTime.fromISO(validatedData.endTime.toISOString()),
+        type: validatedData.type,
+        setId: validatedData.setId,
+      })
+
+      if (validatedData.userIds && validatedData.userIds.length > 0) {
+        await ScheduleAssignment.createMany(
+          validatedData.userIds.map((userId: number) => ({
+            scheduleId: schedule.id,
+            userId,
+          }))
+        )
+      }
+
+      session.flash('success', 'Event created successfully')
+      return response.redirect().toRoute('index.schedule')
+    } catch (error) {
+      console.error('Error creating event:', error)
+      session.flash('error', 'Failed to create event. Please try again.')
+      return response.redirect().back()
+    }
+  }
 
   async show({ inertia, params }: HttpContext) {}
 
