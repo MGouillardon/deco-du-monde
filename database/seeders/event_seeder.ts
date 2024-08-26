@@ -43,19 +43,31 @@ export default class EventSeeder extends BaseSeeder {
   private getRandomStartDate(): DateTime {
     const daysToAdd = Math.floor(Math.random() * 30)
     const hour = Math.floor(Math.random() * 13) + 8
-    const minute = Math.floor(Math.random() * 4) * 15
+    const minute = Math.random() < 0.5 ? 0 : 30
     return DateTime.local()
       .plus({ days: daysToAdd })
       .set({ hour, minute, second: 0, millisecond: 0 })
   }
 
   private getRandomEndDate(startDate: DateTime): DateTime {
-    const maxDuration = startDate.endOf('day').diff(startDate, 'hours').hours
-    const duration = Math.min(Math.floor(Math.random() * 8) + 1, maxDuration)
+    const maxEndTime = startDate.set({ hour: 20, minute: 0 })
+    let duration = Math.floor(Math.random() * 6) + 1
+
+    duration = Math.ceil(duration * 2) / 2
+
     let endDate = startDate.plus({ hours: duration })
 
-    if (endDate.day !== startDate.day) {
-      endDate = startDate.endOf('day')
+    if (endDate > maxEndTime) {
+      endDate = maxEndTime
+    }
+
+    const minutes = endDate.minute
+    if (minutes < 15) {
+      endDate = endDate.set({ minute: 0 })
+    } else if (minutes < 45) {
+      endDate = endDate.set({ minute: 30 })
+    } else {
+      endDate = endDate.plus({ hours: 1 }).set({ minute: 0 })
     }
 
     if (endDate.diff(startDate, 'hours').hours < 1) {
