@@ -9,7 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
-import EventController from '#controllers/admin/dashboard/event_controller'
+const EventController = () => import('#controllers/admin/dashboard/event_controller')
 const SetController = () => import('#controllers/admin/dashboard/set_controller')
 const ItemController = () => import('#controllers/admin/dashboard/item_controller')
 const ProfileController = () => import('#controllers/admin/dashboard/profile_controller')
