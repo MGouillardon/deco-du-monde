@@ -19,16 +19,14 @@ const props = defineProps({
 const { title } = toRefs(props)
 
 const page = usePage()
-const { flashMessage, showFlash, setFlashMessage } = useFlashMessage()
+const { setFlashMessage } = useFlashMessage()
 
 const user = computed(() => page.props.auth)
 const pageTitle = computed(() => `${title.value} | Admin`)
 
 watchEffect(() => {
   const { success, info } = page.props
-  if (success || info) {
-    setFlashMessage(success ? 'success' : 'info', success || info)
-  }
+  success ? setFlashMessage(success, 'success') : info ? setFlashMessage(info, 'info') : null
 })
 </script>
 
@@ -41,10 +39,6 @@ watchEffect(() => {
       <PageTitle v-if="title" :title="title" />
       <slot></slot>
     </main>
-    <FlashMessage 
-      :show="showFlash"
-      :type="flashMessage.type" 
-      :message="flashMessage.message || ''" 
-    />
+    <FlashMessage />
   </AsideLayout>
 </template>

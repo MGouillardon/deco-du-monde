@@ -1,23 +1,10 @@
 <script setup>
 import { computed } from 'vue'
-
-const props = defineProps({
-  message: {
-    type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    default: 'info',
-  },
-  show: {
-    type: Boolean,
-    default: false,
-  },
-})
+import { useFlashMessage } from '@/composables/useFlashMessage'
+const { message, type, show, clearFlashMessage } = useFlashMessage()
 
 const alertClass = computed(() => {
-  return props.type === 'success' ? 'alert-success' : 'alert-info'
+  return type.value === 'success' ? 'alert-success' : 'alert-info'
 })
 </script>
 

@@ -1,10 +1,12 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import EmailIcon from '@/components/icons/EmailIcon.vue'
 import PasswordIcon from '@/components/icons/PwdIcon.vue'
 import ErrorFieldMessage from '@/components/Messages/ErrorFieldMessage.vue'
 import FlashMessage from '@/components/Messages/FlashMessage.vue'
+import { useFlashMessage } from '@/composables/useFlashMessage'
+
 
 const props = defineProps({
   errors: [Object, String],
@@ -25,6 +27,18 @@ const errorMessages = computed(() => {
   if (typeof props.errors === 'string') return [props.errors]
   return Object.values(props.errors).flat()
 })
+
+const { setFlashMessage } = useFlashMessage()
+
+watch(
+  () => props.info,
+  (newInfo) => {
+    if (newInfo) {
+      setFlashMessage(newInfo, 'info')
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -77,5 +91,11 @@ const errorMessages = computed(() => {
       </form>
     </div>
   </main>
-  <FlashMessage v-if="props.info" :message="props.info" />
+  <FlashMessage
+    v-if="props.info"
+    :show="showFlash"
+    :type="flashType"
+    :message="props.info"
+    @dismiss="dismissFlash"
+  />
 </template>

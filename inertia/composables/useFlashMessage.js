@@ -1,34 +1,37 @@
 /* eslint-disable unicorn/filename-case */
-import { ref } from 'vue'
+import { ref, readonly } from 'vue'
+
+const message = ref('')
+const type = ref('info')
+const show = ref(false)
+let timer = null
 
 export function useFlashMessage() {
-  const flashMessage = ref({ type: '', message: '' })
-  const showFlash = ref(false)
-  let flashTimeout
+  const setFlashMessage = (newMessage, newType = 'info') => {
+    message.value = newMessage
+    type.value = newType
+    show.value = true
 
-  const setFlashMessage = (type, message) => {
-    flashMessage.value = { type, message }
-    showFlash.value = true
-
-    if (flashTimeout) clearTimeout(flashTimeout)
-    flashTimeout = setTimeout(() => {
-      showFlash.value = false
-      flashMessage.value = { type: '', message: '' }
+    if (timer) clearTimeout(timer)
+    timer = setTimeout(() => {
+      clearFlashMessage()
     }, 2000)
   }
 
   const clearFlashMessage = () => {
-    if (flashTimeout) {
-      clearTimeout(flashTimeout)
-      flashTimeout = null
+    message.value = ''
+    type.value = 'info'
+    show.value = false
+    if (timer) {
+      clearTimeout(timer)
+      timer = null
     }
-    showFlash.value = false
-    flashMessage.value = { type: '', message: '' }
   }
 
   return {
-    flashMessage,
-    showFlash,
+    message: readonly(message),
+    type: readonly(type),
+    show: readonly(show),
     setFlashMessage,
     clearFlashMessage,
   }
