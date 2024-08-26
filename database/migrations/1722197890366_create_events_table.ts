@@ -23,6 +23,13 @@ export default class extends BaseSchema {
         .inTable('sets')
         .onDelete('CASCADE')
         .nullable()
+      table
+        .integer('item_id')
+        .unsigned()
+        .references('id')
+        .inTable('items')
+        .onDelete('CASCADE')
+        .nullable()
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
     })

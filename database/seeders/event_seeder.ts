@@ -2,6 +2,7 @@ import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import { EventFactory } from '#factories/event_factory'
 import Location from '#models/location'
 import Set from '#models/set'
+import Item from '#models/item'
 import { EventType } from '#enums/event_type'
 import { DateTime } from 'luxon'
 
@@ -9,35 +10,75 @@ export default class EventSeeder extends BaseSeeder {
   async run() {
     const locations = await Location.all()
     const sets = await Set.all()
+    const items = await Item.all()
 
     for (const location of locations) {
-      const eventCount = Math.floor(Math.random() * 3) + 3
-      for (let i = 0; i < eventCount; i++) {
-        const eventType = this.getRandomEventType(location.isStudio)
-        const startDate = this.getRandomStartDate()
-        const endDate = this.getRandomEndDate(startDate)
-
-        const event = await EventFactory.merge({
-          locationId: location.id,
-          type: eventType,
-          startTime: startDate,
-          endTime: endDate,
-        }).create()
-
-        if (eventType !== EventType.STUDIO_SHOOT) {
-          const randomSet = sets[Math.floor(Math.random() * sets.length)]
-          await event.related('set').associate(randomSet)
-        }
+      if (location.isStudio) {
+        await this.createStudioEvents(location, items)
+      } else {
+        await this.createSetEvents(location, sets)
       }
     }
   }
 
-  private getRandomEventType(isStudio: boolean): EventType {
-    if (isStudio) {
-      return EventType.STUDIO_SHOOT
+  private async createStudioEvents(location: Location, items: Item[]) {
+    const eventCount = Math.floor(Math.random() * 3) + 3
+    for (let i = 0; i < eventCount; i++) {
+      const startDate = this.getRandomStartDate()
+      const endDate = this.getRandomEndDate(startDate)
+      const randomItem = items[Math.floor(Math.random() * items.length)]
+
+      await EventFactory.merge({
+        locationId: location.id,
+        type: EventType.STUDIO_SHOOT,
+        startTime: startDate,
+        endTime: endDate,
+        itemId: randomItem.id,
+      }).create()
     }
-    const types = [EventType.SET_PREPARATION, EventType.SET_SHOOT, EventType.SET_REMOVAL]
-    return types[Math.floor(Math.random() * types.length)]
+  }
+
+  private async createSetEvents(location: Location, sets: Set[]) {
+    const setCount = Math.floor(Math.random() * 2) + 1 // Create 1 or 2 set workflows
+    for (let i = 0; i < setCount; i++) {
+      const randomSet = sets[Math.floor(Math.random() * sets.length)]
+      let currentDate = this.getRandomStartDate()
+
+      // Create Set Preparation event
+      const prepStartDate = currentDate
+      const prepEndDate = this.getRandomEndDate(prepStartDate)
+      await EventFactory.merge({
+        locationId: location.id,
+        type: EventType.SET_PREPARATION,
+        startTime: prepStartDate,
+        endTime: prepEndDate,
+        setId: randomSet.id,
+      }).create()
+
+      // Create Set Shoot event
+      currentDate = prepEndDate.plus({ days: 1 }).startOf('day')
+      const shootStartDate = this.getRandomStartDate(currentDate)
+      const shootEndDate = this.getRandomEndDate(shootStartDate)
+      await EventFactory.merge({
+        locationId: location.id,
+        type: EventType.SET_SHOOT,
+        startTime: shootStartDate,
+        endTime: shootEndDate,
+        setId: randomSet.id,
+      }).create()
+
+      // Create Set Removal event
+      currentDate = shootEndDate.plus({ days: 1 }).startOf('day')
+      const removalStartDate = this.getRandomStartDate(currentDate)
+      const removalEndDate = this.getRandomEndDate(removalStartDate)
+      await EventFactory.merge({
+        locationId: location.id,
+        type: EventType.SET_REMOVAL,
+        startTime: removalStartDate,
+        endTime: removalEndDate,
+        setId: randomSet.id,
+      }).create()
+    }
   }
 
   private getRandomStartDate(): DateTime {
