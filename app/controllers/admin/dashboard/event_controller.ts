@@ -1,16 +1,22 @@
+// app/controllers/event_controller.ts
+
 import { HttpContext } from '@adonisjs/core/http'
-import Event from '#models/event'
-import { DateTime } from 'luxon'
+import { EventService } from '#services/event_service'
 import Location from '#models/location'
 import User from '#models/user'
 import { EventType } from '#enums/event_type'
-import EventAssignment from '#models/event_assignment'
 import { storeEventValidator } from '#validators/dashboard/event/store'
 import Set from '#models/set'
+import Item from '#models/item'
+import { inject } from '@adonisjs/core'
+import { DateTime } from 'luxon'
 
+@inject()
 export default class EventController {
+  constructor(private eventService: EventService) {}
+
   async index({ inertia }: HttpContext) {
-    const events = await this.fetchAllEvents()
+    const events = await this.eventService.fetchAllEvents()
 
     return inertia.render('Admin/Dashboard/Event/Index', {
       title: 'Calendar',
@@ -18,24 +24,26 @@ export default class EventController {
     })
   }
 
-  private async fetchAllEvents() {
-    const events = await Event.query().preload('location').preload('set')
-
-    return events.map((event) => ({
-      id: event.id,
-      title: event.set ? `Shoot: ${event.set.name}` : 'Preparation',
-      start: event.startTime.toISO(),
-      end: event.endTime.toISO(),
-      extendedProps: {
-        location: event.location.name,
-        type: event.type,
-      },
-    }))
-  }
   async create({ inertia }: HttpContext) {
-    const locations = await Location.all()
-    const sets = await Set.all()
-    const users = await User.all()
+    const [locations, sets, items, users] = await Promise.all([
+      Location.query().select('id', 'name').orderBy('name'),
+      Set.query().select('id', 'name').orderBy('name'),
+      Item.query().select('id', 'name').orderBy('name'),
+      User.query()
+        .select('id', 'fullName', 'roleId')
+        .withScopes((scopes) => scopes.withoutAdmin())
+        .preload('role', (query) => query.select('id', 'name')),
+    ])
+
+    const usersByRole: { [key: string]: User[] } = users.reduce(
+      (acc, user) => {
+        const roleName = user.role.name.toLowerCase()
+        ;(acc[roleName] ??= []).push(user)
+        return acc
+      },
+      {} as { [key: string]: User[] }
+    )
+
     const eventTypes = Object.fromEntries(
       Object.entries(EventType).map(([key, value]) => [key, value])
     )
@@ -44,7 +52,8 @@ export default class EventController {
       title: 'Create an Event',
       locations,
       sets,
-      users,
+      items,
+      usersByRole,
       eventTypes,
     })
   }
@@ -53,23 +62,7 @@ export default class EventController {
     const validatedData = await request.validateUsing(storeEventValidator)
 
     try {
-      const event = await Event.create({
-        locationId: validatedData.locationId,
-        startTime: DateTime.fromISO(validatedData.startTime.toISOString()),
-        endTime: DateTime.fromISO(validatedData.endTime.toISOString()),
-        type: validatedData.type,
-        setId: validatedData.setId,
-      })
-
-      if (validatedData.userIds && validatedData.userIds.length > 0) {
-        await EventAssignment.createMany(
-          validatedData.userIds.map((userId: number) => ({
-            eventId: event.id,
-            userId,
-          }))
-        )
-      }
-
+      await this.eventService.createEvent(validatedData)
       session.flash('success', 'Event created successfully')
       return response.redirect().toRoute('index.event')
     } catch (error) {
@@ -79,24 +72,44 @@ export default class EventController {
     }
   }
 
-  async show({ inertia, params }: HttpContext) {}
+  async show({ inertia, params, response, session }: HttpContext) {
+    try {
+      const event = await this.eventService.getEventDetails(params.id)
+      return inertia.render('Admin/Dashboard/Event/Show', {
+        title: `Event Details: ${event.title}`,
+        event: event,
+      })
+    } catch (error) {
+      if (error.code === 'E_ROW_NOT_FOUND') {
+        session.flash('error', 'Event not found')
+      } else {
+        console.error('Error fetching event:', error)
+        session.flash('error', 'An error occurred while fetching the event')
+      }
+      return response.redirect().toRoute('index.event')
+    }
+  }
 
-  async edit({ inertia, params }: HttpContext) {}
+  async edit({ inertia, params }: HttpContext) {
+    // To be implemented
+  }
 
   async update({ request, response, params, session }: HttpContext) {
     const { id } = params
     const { start, end } = request.only(['start', 'end'])
 
-    const event = await Event.findOrFail(id)
+    try {
+      await this.eventService.updateEventDates(id, start, end)
+      session.flash('success', 'Event updated successfully')
+    } catch (error) {
+      console.error('Error updating event:', error)
+      session.flash('error', 'Failed to update event. Please try again.')
+    }
 
-    event.startTime = DateTime.fromISO(start)
-    event.endTime = DateTime.fromISO(end)
-
-    await event.save()
-
-    session.flash('success', 'Event updated successfully')
     return response.redirect().toRoute('index.event')
   }
 
-  async destroy({ response, params }: HttpContext) {}
+  async destroy({ response, params }: HttpContext) {
+    // To be implemented
+  }
 }

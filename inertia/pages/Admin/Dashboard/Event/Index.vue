@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { useForm, router } from '@inertiajs/vue3'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -34,6 +34,7 @@ const calendarOptions = computed(() => ({
   },
   editable: true,
   selectable: true,
+  timeZone: 'UTC',
   events: props.events,
   eventClick: handleEventClick,
   eventChange: handleEventChange,
@@ -92,7 +93,7 @@ const checkIfToday = () => {
 }
 
 const handleEventClick = (info) => {
-  console.log('Event clicked:', info.event)
+  router.visit(`/admin/dashboard/events/show/${info.event.id}`)
 }
 
 const handleDateSelect = (info) => {
@@ -151,7 +152,7 @@ const handleDatesSet = (dateInfo) => {
 <template>
   <div class="relative">
     <button
-      class="fixed bottom-4 right-9 w-14 h-14 bg-primary hover:bg-primary-focus text-primary-content rounded-full shadow-lg flex items-center justify-center transition-colors duration-300 group z-50"
+      class="fixed bottom-4 right-9 w-14 h-14 btn btn-primary rounded-full shadow-xl flex items-center justify-center z-50 group"
       @click="() => $inertia.visit('/admin/dashboard/events/create')"
       aria-label="Create Event"
     >
