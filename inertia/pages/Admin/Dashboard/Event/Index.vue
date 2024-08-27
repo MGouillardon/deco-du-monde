@@ -108,16 +108,6 @@ const handleEventChange = (changeInfo) => {
   form.put(`/admin/dashboard/events/update/${form.id}/dates`, {
     preserveState: true,
     preserveScroll: true,
-    onSuccess: () => {
-      // Optionally show a success message
-      console.log('Event updated successfully')
-    },
-    onError: (errors) => {
-      // Revert the change if the server update fails
-      changeInfo.revert()
-      // Optionally show an error message
-      console.error('Failed to update event', errors)
-    },
   })
 }
 
