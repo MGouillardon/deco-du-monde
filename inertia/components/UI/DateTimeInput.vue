@@ -16,87 +16,104 @@ const emit = defineEmits(['update:modelValue'])
 const dateValue = ref('')
 const timeValue = ref('')
 
-const combinedValue = computed(() => 
-  dateValue.value && timeValue.value ? `${dateValue.value}T${timeValue.value}` : ''
-)
+const combinedValue = computed(() => {
+  if (dateValue.value && timeValue.value) {
+    return `${dateValue.value}T${timeValue.value}`
+  }
+  return ''
+})
 
-const updateValue = () => emit('update:modelValue', combinedValue.value)
+const updateValue = () => {
+  emit('update:modelValue', combinedValue.value)
+}
 
 const today = new Date().toISOString().split('T')[0]
 const defaultTime = '08:00'
 
 const timeOptions = computed(() => {
   const options = []
-  for (let hour = 8; hour <= 20; hour++) {
-    const paddedHour = hour.toString().padStart(2, '0')
-    options.push(`${paddedHour}:00`)
-    if (hour < 20) options.push(`${paddedHour}:30`)
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      options.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`)
+    }
   }
   return options
 })
 
-const initializeValues = () => {
-  if (!props.modelValue) {
-    dateValue.value = today
-    timeValue.value = defaultTime
-    updateValue()
-  }
-}
-
-const handleModelValueChange = (newValue) => {
-  if (newValue) {
-    [dateValue.value, timeValue.value] = newValue.split('T')
-  }
-}
-
-const handleStartTimeChange = (newValue) => {
-  if (props.isEndTime && newValue) {
-    const [startDate, startTime] = newValue.split('T')
-    dateValue.value = startDate
-
-    const [startHour, startMinute] = startTime.split(':').map(Number)
-    let endHour = startHour
-    let endMinute = startMinute + 30
-
-    if (endMinute >= 60) {
-      endHour++
-      endMinute -= 60
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue) {
+      const [date, time] = newValue.split('T')
+      dateValue.value = date
+      timeValue.value = time.substring(0, 5)
+    } else {
+      dateValue.value = today
+      timeValue.value = defaultTime
     }
-
-    endHour = Math.min(endHour, 20)
-    endMinute = endHour === 20 ? 0 : endMinute
-
-    timeValue.value = `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}`
     updateValue()
+  },
+  { immediate: true }
+)
+
+watch(
+  () => props.startTime,
+  (newValue) => {
+    if (props.isEndTime && newValue) {
+      const [startDate, startTime] = newValue.split('T')
+      dateValue.value = startDate
+
+      const startHour = parseInt(startTime.split(':')[0])
+      const startMinute = parseInt(startTime.split(':')[1])
+
+      let endHour = startHour
+      let endMinute = startMinute + 30
+
+      if (endMinute >= 60) {
+        endHour++
+        endMinute -= 60
+      }
+
+      if (endHour > 20) {
+        endHour = 20
+        endMinute = 0
+      }
+
+      timeValue.value = `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}`
+      updateValue()
+    }
   }
+)
+
+if (!props.modelValue) {
+  dateValue.value = today
+  timeValue.value = defaultTime
+  updateValue()
 }
 
 const handleTimeChange = () => {
   if (props.isEndTime && props.startTime) {
     const [startDate, startTime] = props.startTime.split('T')
     if (dateValue.value === startDate && timeValue.value <= startTime) {
-      const [hour, minute] = startTime.split(':').map(Number)
-      let newHour = hour
-      let newMinute = minute + 30
+      const [hour, minute] = startTime.split(':')
+      let newHour = parseInt(hour)
+      let newMinute = parseInt(minute) + 30
 
       if (newMinute >= 60) {
         newHour++
         newMinute -= 60
       }
 
-      newHour = Math.min(newHour, 20)
-      newMinute = newHour === 20 ? 0 : newMinute
+      if (newHour > 20) {
+        newHour = 20
+        newMinute = 0
+      }
 
       timeValue.value = `${newHour.toString().padStart(2, '0')}:${newMinute.toString().padStart(2, '0')}`
     }
   }
   updateValue()
 }
-
-watch(() => props.modelValue, handleModelValueChange, { immediate: true })
-watch(() => props.startTime, handleStartTimeChange)
-
-initializeValues()
 </script>
 
 <template>
@@ -110,8 +127,8 @@ initializeValues()
         :id="`${label}-date`"
         v-model="dateValue"
         class="input input-bordered flex-1"
-        :min="min?.split('T')[0]"
-        :max="max?.split('T')[0]"
+        :min="min ? min.split('T')[0] : undefined"
+        :max="max ? max.split('T')[0] : undefined"
         :required="required"
         @change="updateValue"
       />

@@ -105,7 +105,7 @@ const handleEventChange = (changeInfo) => {
   form.start = changeInfo.event.start.toISOString()
   form.end = changeInfo.event.end.toISOString()
 
-  form.put(`/admin/dashboard/events/update/${form.id}`, {
+  form.put(`/admin/dashboard/events/update/${form.id}/dates`, {
     preserveState: true,
     preserveScroll: true,
     onSuccess: () => {

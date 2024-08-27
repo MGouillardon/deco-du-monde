@@ -13,7 +13,21 @@ const props = defineProps({
 <template>
   <div class="card bg-base-100 shadow-xl">
     <div class="card-body">
-      <h2 class="card-title text-2xl mb-4">{{ event.title }}</h2>
+      <div class="flex justify-end gap-2">
+        <Link :href="`/admin/dashboard/events/edit/${event.id}`" class="btn btn-primary btn-sm"
+          >Edit Event</Link
+        >
+        <Link
+          :href="`/admin/dashboard/events/delete/${event.id}`"
+          method="delete"
+          as="button"
+          class="btn btn-error btn-sm"
+          :data-id="event.id"
+          preserve-scroll
+        >
+          Delete Event
+        </Link>
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
           <h3 class="text-xl font-semibold mb-3">Event Details</h3>
@@ -45,10 +59,7 @@ const props = defineProps({
       </div>
     </div>
   </div>
-  <div class="mt-6 space-x-4">
-    <Link href="/admin/dashboard/events" class="btn btn-neutral">Back to Calendar</Link>
-    <Link :href="`/admin/dashboard/events/edit/${event.id}`" class="btn btn-primary"
-      >Edit Event</Link
-    >
+  <div class="mt-6">
+    <Link href="/admin/dashboard/events" class="btn btn-neutral btn-sm">Back to Calendar</Link>
   </div>
 </template>

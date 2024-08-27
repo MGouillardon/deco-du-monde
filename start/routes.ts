@@ -110,6 +110,7 @@ router
     router.get('/show/:id', [EventController, 'show']).as('show.event')
     router.get('/edit/:id', [EventController, 'edit']).as('edit.event')
     router.put('/update/:id', [EventController, 'update']).as('update.event')
+    router.put('/update/:id/dates', [EventController, 'updateEventDates']).as('update.event.dates')
     router.delete('/delete/:id', [EventController, 'destroy']).as('delete.event')
   })
   .prefix('admin/dashboard/events')
