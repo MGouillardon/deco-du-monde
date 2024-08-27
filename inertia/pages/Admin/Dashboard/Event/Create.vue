@@ -121,6 +121,8 @@ const submit = () => {
           label="End Time"
           :min="form.startTime"
           :required="true"
+          :is-end-time="true"
+          :start-time="form.startTime"
         />
         <ErrorFieldMessage v-if="errors?.endTime" :error="errors.endTime" class="mt-1" />
       </div>
