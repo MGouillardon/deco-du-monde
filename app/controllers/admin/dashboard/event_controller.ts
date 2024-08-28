@@ -10,12 +10,12 @@ export default class EventController {
 
   async index({ inertia }: HttpContext) {
     const events = await this.eventService.fetchAllEvents()
-    return inertia.render('Admin/Dashboard/Event/Index', { title: 'Calendar', events })
+    return inertia.render('Admin/Dashboard/Events/Index', { title: 'Calendar', events })
   }
 
   async create({ inertia }: HttpContext) {
     const data = await this.eventService.getEventFormData()
-    return inertia.render('Admin/Dashboard/Event/Create', { title: 'Create an Event', ...data })
+    return inertia.render('Admin/Dashboard/Events/Create', { title: 'Create an Event', ...data })
   }
 
   async store({ request, response, session }: HttpContext) {
@@ -27,7 +27,7 @@ export default class EventController {
 
   async show({ inertia, params }: HttpContext) {
     const event = await this.eventService.getEventDetails(params.id)
-    return inertia.render('Admin/Dashboard/Event/Show', { title: event.title, event })
+    return inertia.render('Admin/Dashboard/Events/Show', { title: event.title, event })
   }
 
   async edit({ inertia, params }: HttpContext) {
@@ -35,7 +35,7 @@ export default class EventController {
       this.eventService.getEventDetails(params.id),
       this.eventService.getEventFormData(),
     ])
-    return inertia.render('Admin/Dashboard/Event/Edit', {
+    return inertia.render('Admin/Dashboard/Events/Edit', {
       title: 'Edit Event',
       event,
       ...formData,
