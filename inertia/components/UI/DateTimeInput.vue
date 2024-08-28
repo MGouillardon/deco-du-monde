@@ -1,5 +1,12 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { 
+  generateTimeOptions, 
+  getDefaultTime, 
+  calculateEndTime, 
+  isEndTimeValid,
+  getTodayDate
+} from '@/utils/date'
 
 const props = defineProps({
   modelValue: String,
@@ -27,18 +34,10 @@ const updateValue = () => {
   emit('update:modelValue', combinedValue.value)
 }
 
-const today = new Date().toISOString().split('T')[0]
-const defaultTime = '08:00'
+const today = getTodayDate()
+const defaultTime = getDefaultTime()
 
-const timeOptions = computed(() => {
-  const options = []
-  for (let hour = 0; hour < 24; hour++) {
-    for (let minute = 0; minute < 60; minute += 30) {
-      options.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`)
-    }
-  }
-  return options
-})
+const timeOptions = computed(() => generateTimeOptions())
 
 watch(
   () => props.modelValue,
@@ -62,24 +61,7 @@ watch(
     if (props.isEndTime && newValue) {
       const [startDate, startTime] = newValue.split('T')
       dateValue.value = startDate
-
-      const startHour = parseInt(startTime.split(':')[0])
-      const startMinute = parseInt(startTime.split(':')[1])
-
-      let endHour = startHour
-      let endMinute = startMinute + 30
-
-      if (endMinute >= 60) {
-        endHour++
-        endMinute -= 60
-      }
-
-      if (endHour > 20) {
-        endHour = 20
-        endMinute = 0
-      }
-
-      timeValue.value = `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}`
+      timeValue.value = calculateEndTime(startTime.substring(0, 5))
       updateValue()
     }
   }
@@ -94,22 +76,8 @@ if (!props.modelValue) {
 const handleTimeChange = () => {
   if (props.isEndTime && props.startTime) {
     const [startDate, startTime] = props.startTime.split('T')
-    if (dateValue.value === startDate && timeValue.value <= startTime) {
-      const [hour, minute] = startTime.split(':')
-      let newHour = parseInt(hour)
-      let newMinute = parseInt(minute) + 30
-
-      if (newMinute >= 60) {
-        newHour++
-        newMinute -= 60
-      }
-
-      if (newHour > 20) {
-        newHour = 20
-        newMinute = 0
-      }
-
-      timeValue.value = `${newHour.toString().padStart(2, '0')}:${newMinute.toString().padStart(2, '0')}`
+    if (!isEndTimeValid(startDate, startTime.substring(0, 5), dateValue.value, timeValue.value)) {
+      timeValue.value = calculateEndTime(startTime.substring(0, 5))
     }
   }
   updateValue()
