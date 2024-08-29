@@ -6,73 +6,28 @@ import User from '#models/user'
 import Location from '#models/location'
 import Set from '#models/set'
 import Item from '#models/item'
-
-export interface EventDTO {
-  id: number
-  title: string
-  start: string | null
-  end: string | null
-  location: string
-  locationId?: number
-  type: EventType
-  itemId?: number | null
-  itemName?: string | null
-  setId?: number | null
-  setName?: string | null
-  assignments?: Array<{
-    id: number
-    user: {
-      id: number
-      fullName: string | null
-      role: string
-    }
-  }>
-}
+import type { EventDTO } from '#types/event_dto'
 
 export class EventService {
-  private getEventTitle(event: Event): string {
-    const titles = {
-      [EventType.STUDIO_SHOOT]: `Studio Shoot: ${event.item?.name ?? ''}`,
-      [EventType.SET_SHOOT]: `Set Shoot: ${event.set?.name ?? ''}`,
-      [EventType.SET_PREPARATION]: 'Set Preparation',
-      [EventType.SET_REMOVAL]: 'Set Removal',
-    }
-    return titles[event.type] ?? 'Unknown Event Type'
-  }
-
   async fetchAllEvents(): Promise<EventDTO[]> {
-    const events = await Event.query().preload('location').preload('set').preload('item')
+    const events = await Event.query().withScopes((scope) => scope.withDetails())
 
-    return events.map((event) => ({
-      id: event.id,
-      title: this.getEventTitle(event),
-      start: event.startTime.toISO(),
-      end: event.endTime.toISO(),
-      location: event.location.name,
-      type: event.type,
-      itemId: event.item?.id,
-      itemName: event.item?.name,
-      setId: event.set?.id,
-      setName: event.set?.name,
-    }))
+    return events.map(this.mapEventToDTO)
   }
 
   async getEventFormData() {
     const [locations, sets, items, users] = await Promise.all([
-      Location.query().select('id', 'name').orderBy('name'),
-      Set.query().select('id', 'name').orderBy('name'),
-      Item.query().select('id', 'name').orderBy('name'),
-      User.query()
-        .select('id', 'fullName', 'roleId')
-        .withScopes((scopes) => scopes.withoutAdmin())
-        .preload('role', (query) => query.select('id', 'name')),
+      this.fetchLocations(),
+      this.fetchSets(),
+      this.fetchItems(),
+      this.fetchUsers(),
     ])
 
     return {
       locations,
       sets,
       items,
-      usersByRole: this.groupUsersByRole(users),
+      usersByRole: User.groupUsersByRole(users),
       eventTypes: Object.fromEntries(Object.entries(EventType)),
     }
   }
@@ -101,38 +56,9 @@ export class EventService {
   }
 
   async getEventDetails(id: number): Promise<EventDTO> {
-    const event = await Event.query()
-      .where('id', id)
-      .preload('location')
-      .preload('set')
-      .preload('item')
-      .preload('eventAssignments', (query) =>
-        query.preload('user', (userQuery) => userQuery.preload('role'))
-      )
-      .firstOrFail()
+    const event = await this.fetchEventById(id)
 
-    return {
-      id: event.id,
-      title: this.getEventTitle(event),
-      start: event.startTime.toISO(),
-      end: event.endTime.toISO(),
-      location: event.location.name,
-      locationId: event.locationId,
-      type: event.type,
-      setId: event.set?.id,
-      setName: event.set?.name,
-      itemId: event.item?.id,
-      itemName: event.item?.name,
-      assignments: event.eventAssignments.map((assignment) => ({
-        id: assignment.id,
-        userId: assignment.userId,
-        user: {
-          id: assignment.user.id,
-          fullName: assignment.user.fullName,
-          role: assignment.user.role.name,
-        },
-      })),
-    }
+    return this.mapEventToDTO(event)
   }
 
   async updateEvent(id: number, data: any): Promise<Event> {
@@ -161,10 +87,6 @@ export class EventService {
       )
     }
 
-    await event.load('eventAssignments', (query) =>
-      query.preload('user', (userQuery) => userQuery.preload('role'))
-    )
-
     return event
   }
 
@@ -183,14 +105,54 @@ export class EventService {
     await event.delete()
   }
 
-  private groupUsersByRole(users: User[]): { [key: string]: User[] } {
-    return users.reduce(
-      (acc, user) => {
-        const roleName = user.role.name.toLowerCase()
-        ;(acc[roleName] ??= []).push(user)
-        return acc
-      },
-      {} as { [key: string]: User[] }
-    )
+  private async fetchLocations() {
+    return Location.query().select('id', 'name').orderBy('name')
+  }
+
+  private async fetchSets() {
+    return Set.query().select('id', 'name').orderBy('name')
+  }
+
+  private async fetchItems() {
+    return Item.query().select('id', 'name').orderBy('name')
+  }
+
+  private async fetchUsers() {
+    return User.query()
+      .select('id', 'fullName', 'roleId')
+      .withScopes((scopes) => scopes.withoutAdmin())
+      .preload('role', (query) => query.select('id', 'name'))
+  }
+
+  private async fetchEventById(id: number) {
+    return Event.query()
+      .where('id', id)
+      .withScopes((scope) => scope.withDetails())
+      .firstOrFail()
+  }
+
+  private mapEventToDTO(event: Event): EventDTO {
+    return {
+      id: event.id,
+      title: event.title,
+      start: event.startTime.toISO(),
+      end: event.endTime.toISO(),
+      location: event.location.name,
+      locationId: event.locationId,
+      type: event.type,
+      itemId: event.item?.id,
+      itemName: event.item?.name,
+      setId: event.set?.id,
+      setName: event.set?.name,
+      assignments: event.eventAssignments?.map((assignment) => ({
+        id: assignment.id,
+        userId: assignment.userId,
+        user: {
+          id: assignment.user.id,
+          fullName: assignment.user.fullName,
+          role: assignment.user.role.name,
+        },
+      })),
+    }
   }
 }

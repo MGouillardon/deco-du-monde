@@ -1,12 +1,14 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column, hasMany, computed, scope } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import Location from '#models/location'
 import EventAssignment from '#models/event_assignment'
 import Workday from '#models/workday'
 import Set from '#models/set'
 import { EventType } from '#enums/event_type'
 import Item from '#models/item'
+import string from '@adonisjs/core/helpers/string'
 
 export default class Event extends BaseModel {
   @column({ isPrimary: true })
@@ -50,4 +52,21 @@ export default class Event extends BaseModel {
 
   @belongsTo(() => Workday)
   declare workday: BelongsTo<typeof Workday>
+
+  @computed()
+  get title() {
+    const entityName = this.type === EventType.STUDIO_SHOOT ? this.item?.name : this.set?.name
+    const title = `${this.type.replace('_', ' ')} - ${entityName ?? ''}`.trim()
+    return string.capitalCase(title)
+  }
+
+  static withDetails = scope((query: ModelQueryBuilderContract<typeof Event>) => {
+    query
+      .preload('location')
+      .preload('set')
+      .preload('item')
+      .preload('eventAssignments', (eventAssignmentsQuery) =>
+        eventAssignmentsQuery.preload('user', (userQuery) => userQuery.preload('role'))
+      )
+  })
 }

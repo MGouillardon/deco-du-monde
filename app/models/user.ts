@@ -61,6 +61,17 @@ export default class User extends compose(BaseModel, AuthFinder) {
     query.where('role_id', '!=', Roles.ADMIN)
   })
 
+  static groupUsersByRole(users: User[]): { [key: string]: User[] } {
+    return users.reduce(
+      (acc, user) => {
+        const roleName = user.role.name.toLowerCase()
+        ;(acc[roleName] ??= []).push(user)
+        return acc
+      },
+      {} as { [key: string]: User[] }
+    )
+  }
+
   async initiatePasswordReset(): Promise<PasswordResetToken> {
     await PasswordResetToken.query().where('user_id', this.id).delete()
     return PasswordResetToken.generateToken(this)

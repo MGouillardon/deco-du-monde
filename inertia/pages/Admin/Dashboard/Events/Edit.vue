@@ -17,6 +17,15 @@ const props = defineProps({
   errors: Object,
 })
 
+const initializeAssignments = (type) => {
+  const roles = Object.keys(eventConfig[type]?.roles || {})
+  return roles.map((role) => ({
+    id: null,
+    userId: '',
+    role: role.toLowerCase(),
+  }))
+}
+
 const form = useForm({
   locationId: props.event.locationId,
   startTime: props.event.start,
@@ -45,7 +54,7 @@ watch(
   () => form.type,
   (newType) => {
     if (newType !== props.event.type) {
-      form.userIds = newType ? Object.keys(eventConfig[newType]?.roles || {}).map(() => '') : []
+      form.assignments = initializeAssignments(newType)
       form.setId = null
       form.itemId = null
     }
@@ -66,6 +75,11 @@ watch(
     }
   }
 )
+
+const getAssignmentForRole = (role) => {
+  return form.assignments.find(a => a.role === role.toLowerCase()) || { userId: '' }
+}
+
 
 const isFormValid = computed(() => {
   const requiredFields = ['locationId', 'startTime', 'endTime', 'type']
@@ -162,12 +176,12 @@ const submit = () => {
           </label>
           <select
             :id="`user-${role}`"
-            v-model="form.assignments.find((a) => a.role === role).userId"
+            v-model="getAssignmentForRole(role).userId"
             class="select select-bordered w-full"
             required
           >
             <option value="">Select a {{ formatEventType(role) }}</option>
-            <option v-for="user in usersByRole[role]" :key="user.id" :value="user.id">
+            <option v-for="user in usersByRole[role.toLowerCase()]" :key="user.id" :value="user.id">
               {{ user.fullName }}
             </option>
           </select>
