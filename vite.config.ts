@@ -10,14 +10,14 @@ export default defineConfig({
     vue(),
     adonisjs({ entrypoints: ['inertia/app/app.ts'], reload: ['resources/views/**/*.edge'] }),
   ],
-
-  /**
-   * Define aliases for importing modules from
-   * your frontend code
-   */
   resolve: {
     alias: {
       '@/': `${getDirname(import.meta.url)}/inertia/`,
     },
+  },
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+    include: ['inertia/__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
   },
 })
