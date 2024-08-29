@@ -18,11 +18,18 @@ export default class EventController {
     return inertia.render('Admin/Dashboard/Events/Create', { title: 'Create an Event', ...data })
   }
 
-  async store({ request, response, session }: HttpContext) {
-    const validatedData = await request.validateUsing(storeEventValidator)
-    await this.eventService.createEvent(validatedData)
-    session.flash({ success: 'Event created successfully' })
-    return response.redirect().toRoute('index.event')
+  async store({ request, response, session, inertia }: HttpContext) {
+    try {
+      const validatedData = await request.validateUsing(storeEventValidator)
+      await this.eventService.createEvent(validatedData)
+      session.flash({ success: 'Event created successfully' })
+      return response.redirect().toRoute('index.event')
+    } catch (error) {
+      return inertia.render('Admin/Dashboard/Events/Create', {
+        errors: error.messages,
+        ...(await this.eventService.getEventFormData()),
+      })
+    }
   }
 
   async show({ inertia, params }: HttpContext) {
