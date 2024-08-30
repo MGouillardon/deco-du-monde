@@ -1,6 +1,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import { ref } from 'vue'
+import { formatWidgetTitle, formatWidgetDate } from '@/utils/formatters'
 
 const props = defineProps({
   title: String,
@@ -9,18 +10,6 @@ const props = defineProps({
   upcomingEvent: Array,
   statusOverview: Object,
 })
-
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleString()
-}
-
-const formatTitle = (key) => {
-  return key
-    .replace(/([A-Z])/g, ' $1')
-    .trim()
-    .toLowerCase()
-    .replace(/^./, (char) => char.toUpperCase())
-}
 
 const getStatusColor = (status) => {
   switch (status.toLowerCase()) {
@@ -41,7 +30,7 @@ const getStatusColor = (status) => {
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
     <div v-for="(value, key) in stats" :key="key" class="stats bg-base-100 shadow-xl">
       <div class="stat">
-        <div class="stat-title">{{ formatTitle(key) }}</div>
+        <div class="stat-title">{{ formatWidgetTitle(key) }}</div>
         <p class="stat-value">{{ value }}</p>
       </div>
     </div>
@@ -58,7 +47,7 @@ const getStatusColor = (status) => {
             <Link :href="`/admin/dashboard/items/show/${item.id}`" class="link link-hover">
               {{ item.name }}
             </Link>
-            <span class="text-sm text-base-content/70"> - {{ formatDate(item.updatedAt) }}</span>
+            <span class="text-sm text-base-content/70"> - {{ formatWidgetDate(item.updatedAt) }}</span>
           </li>
         </ul>
         <div class="divider">Recent Sets</div>
@@ -67,7 +56,7 @@ const getStatusColor = (status) => {
             <Link :href="`/admin/dashboard/sets/show/${set.id}`" class="link link-hover">
               {{ set.name }}
             </Link>
-            <span class="text-sm text-base-content/70"> - {{ formatDate(set.createdAt) }}</span>
+            <span class="text-sm text-base-content/70"> - {{ formatWidgetDate(set.createdAt) }}</span>
           </li>
         </ul>
       </div>
@@ -79,7 +68,7 @@ const getStatusColor = (status) => {
         <h2 class="card-title">Upcoming Event</h2>
         <ul>
           <li v-for="event in upcomingEvent" :key="event.id" class="mb-4">
-            <div class="font-semibold">{{ formatDate(event.startTime) }}</div>
+            <div class="font-semibold">{{ formatWidgetDate(event.startTime) }}</div>
             <div>{{ event.set ? `Shoot: ${event.set.name}` : 'Preparation' }}</div>
             <div class="text-sm text-base-content/70">Location: {{ event.location.name }}</div>
           </li>

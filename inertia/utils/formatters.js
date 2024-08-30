@@ -31,3 +31,15 @@ export function formatDateTime(dateTimeString) {
     timeZone: 'UTC',
   })
 }
+
+export const formatWidgetTitle = (key) => {
+  return key
+    .replace(/([A-Z])/g, ' $1')
+    .trim()
+    .toLowerCase()
+    .replace(/^./, (char) => char.toUpperCase())
+}
+
+export const formatWidgetDate = (dateString) => {
+  return new Date(dateString).toLocaleString()
+}
