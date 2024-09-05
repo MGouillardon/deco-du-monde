@@ -4,14 +4,14 @@ import { formatWidgetDate } from '@/utils/formatters'
 import Card from '@/components/UI/Card.vue'
 
 defineProps({
-  upcomingEvent: Array,
+  upcomingEvents: Array,
 })
 </script>
 
 <template>
-  <Card title="Upcoming Event">
+  <Card title="Upcoming Events">
     <ul>
-      <li v-for="event in upcomingEvent" :key="event.id" class="mb-4">
+      <li v-for="event in upcomingEvents" :key="event.id" class="mb-4">
         <div class="font-semibold">{{ formatWidgetDate(event.startTime) }}</div>
         <div>{{ event.set ? `Shoot: ${event.set.name}` : 'Preparation' }}</div>
         <div class="text-sm text-base-content/70">Location: {{ event.location.name }}</div>

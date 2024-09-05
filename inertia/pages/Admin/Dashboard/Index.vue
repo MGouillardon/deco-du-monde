@@ -9,7 +9,7 @@ defineProps({
   title: String,
   stats: Object,
   recentActivity: Object,
-  upcomingEvent: Array,
+  upcomingEvents: Array,
   statusOverview: Object,
 })
 </script>
@@ -21,7 +21,7 @@ defineProps({
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <RecentActivity :recent-activity="recentActivity" />
-      <UpcomingEvent :upcoming-event="upcomingEvent" />
+      <UpcomingEvent :upcoming-events="upcomingEvents" />
       <StatusOverview :status-overview="statusOverview" />
       <QuickAccess />
     </div>
