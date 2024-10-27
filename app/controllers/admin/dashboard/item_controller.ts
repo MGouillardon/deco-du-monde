@@ -1,3 +1,6 @@
+import { HttpContext } from '@adonisjs/core/http'
+import { inject } from '@adonisjs/core'
+import db from '@adonisjs/lucid/services/db'
 import { ItemStatusType } from '#enums/item_status'
 import { LocationType } from '#enums/location_type'
 import Item from '#models/item'
@@ -6,11 +9,13 @@ import ItemValidation from '#models/item_validation'
 import Set from '#models/set'
 import { storeItemValidator } from '#validators/dashboard/items/store'
 import { updateItemValidator } from '#validators/dashboard/items/update'
-import type { HttpContext } from '@adonisjs/core/http'
-import db from '@adonisjs/lucid/services/db'
+import ItemPolicy from '#policies/item_policy'
 
+@inject()
 export default class ItemController {
-  async index({ request, inertia }: HttpContext) {
+  async index({ request, inertia, bouncer }: HttpContext) {
+    await bouncer.with(ItemPolicy).authorize('viewAny')
+
     const page = request.input('page', 1)
     const limit = 10
     const items = await Item.query()
@@ -18,15 +23,21 @@ export default class ItemController {
       .preload('validations')
       .preload('sets')
       .paginate(page, limit)
+
     return inertia.render('Admin/Dashboard/Items/Index', { title: 'Listing items', items })
   }
 
-  async create({ inertia }: HttpContext) {
+  async create({ inertia, bouncer }: HttpContext) {
+    await bouncer.with(ItemPolicy).authorize('create')
+
     return inertia.render('Admin/Dashboard/Items/Create', { title: 'Create a new item' })
   }
 
-  async store({ request, session, response }: HttpContext) {
+  async store({ request, session, response, bouncer }: HttpContext) {
+    await bouncer.with(ItemPolicy).authorize('create')
+
     const { name, description } = await request.validateUsing(storeItemValidator)
+
     await db.transaction(async (trx) => {
       const item = await Item.create(
         {
@@ -57,11 +68,12 @@ export default class ItemController {
 
       return item
     })
+
     session.flash('success', 'Item created successfully')
     return response.redirect().toRoute('listing.item')
   }
 
-  async show({ params, inertia }: HttpContext) {
+  async show({ params, inertia, bouncer }: HttpContext) {
     const item = await Item.query()
       .where('id', params.id)
       .preload('itemStatus')
@@ -70,11 +82,14 @@ export default class ItemController {
       })
       .preload('sets')
       .firstOrFail()
+
+    await bouncer.with(ItemPolicy).authorize('view', item)
+
     const title = `Show item: ${item.name}`
     return inertia.render('Admin/Dashboard/Items/Show', { title, item })
   }
 
-  async edit({ params, inertia }: HttpContext) {
+  async edit({ params, inertia, bouncer }: HttpContext) {
     const item = await Item.query()
       .where('id', params.id)
       .preload('itemStatus')
@@ -83,6 +98,8 @@ export default class ItemController {
       })
       .preload('sets')
       .firstOrFail()
+
+    await bouncer.with(ItemPolicy).authorize('update', item)
 
     const title = `Edit item: ${item.name}`
     const statusOptions = Object.values(ItemStatusType)
@@ -96,22 +113,37 @@ export default class ItemController {
     })
   }
 
-  async update({ params, request, session, response }: HttpContext) {
+  async update({ params, request, session, response, bouncer }: HttpContext) {
     const { id } = params
+    const item = await this.getItemWithRelations(id)
+
+    await bouncer.with(ItemPolicy).authorize('update', item)
+
     const validatedData = await request.validateUsing(updateItemValidator)
 
     await db.transaction(async (trx) => {
-      const item = await this.getItemWithRelations(id, trx)
-      await this.updateItemDetails(item, validatedData, trx)
+      await this.updateItemDetails(item, validatedData)
       await this.updateOrCreateItemStatus(item, validatedData, trx)
-      await this.syncItemSets(item, validatedData.setIds, trx)
+      await this.syncItemSets(item, validatedData.setIds)
     })
 
     session.flash('success', 'Item updated successfully')
     return response.redirect().toRoute('listing.item')
   }
 
-  private async getItemWithRelations(id: number, trx: any) {
+  async destroy({ params, session, response, bouncer }: HttpContext) {
+    const { id } = params
+    const item = await Item.findOrFail(id)
+
+    await bouncer.with(ItemPolicy).authorize('delete', item)
+
+    await item.delete()
+
+    session.flash('success', 'Item deleted successfully')
+    return response.redirect().toRoute('listing.item')
+  }
+
+  private async getItemWithRelations(id: number, trx?: any) {
     return Item.query({ client: trx })
       .where('id', id)
       .preload('itemStatus')
@@ -151,14 +183,5 @@ export default class ItemController {
     if (setIds) {
       await item.related('sets').sync(setIds)
     }
-  }
-
-  async destroy({ params, session, response }: HttpContext) {
-    const { id } = params
-    const item = await Item.findOrFail(id)
-    await item.delete()
-
-    session.flash('success', 'Item deleted successfully')
-    return response.redirect().toRoute('listing.item')
   }
 }
