@@ -81,6 +81,7 @@ router
     router.get('/edit/:id', [ItemController, 'edit']).as('edit.item')
     router.put('/update/:id', [ItemController, 'update']).as('update.item')
     router.delete('/delete/:id', [ItemController, 'destroy']).as('delete.item')
+    router.post('/validate/:id', [ItemController, 'validateStudioPhoto']).as('validate.item')
   })
   .prefix('admin/dashboard/items')
   .use(middleware.auth())

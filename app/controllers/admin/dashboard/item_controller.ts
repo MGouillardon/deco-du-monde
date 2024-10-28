@@ -7,6 +7,7 @@ import Set from '#models/set'
 import { storeItemValidator } from '#validators/dashboard/items/store'
 import { updateItemValidator } from '#validators/dashboard/items/update'
 import ItemPolicy from '#policies/item_policy'
+import { DateTime } from 'luxon'
 
 export default class ItemController {
   async index({ request, inertia, bouncer }: HttpContext) {
@@ -22,7 +23,47 @@ export default class ItemController {
     return inertia.render('Admin/Dashboard/Items/Index', {
       title: 'Listing items',
       items,
+      locationType: LocationType,
     })
+  }
+
+  async create({ inertia, bouncer }: HttpContext) {
+    await bouncer.with(ItemPolicy).authorize('create')
+
+    return inertia.render('Admin/Dashboard/Items/Create', {
+      title: 'Create item',
+      statusOptions: Object.values(ItemStatusType),
+    })
+  }
+
+  async store({ request, session, response, bouncer }: HttpContext) {
+    await bouncer.with(ItemPolicy).authorize('create')
+
+    const validatedData = await request.validateUsing(storeItemValidator)
+    await db.transaction(async () => {
+      const newItem = await Item.create({
+        name: validatedData.name,
+        description: validatedData.description,
+        isPhotographedStudio: false,
+      })
+
+      await Promise.all([
+        newItem.related('itemStatus').create({
+          status: ItemStatusType.NORMAL,
+        }),
+        newItem.related('validations').createMany([
+          {
+            type: LocationType.STUDIO,
+            isValidated: false,
+          },
+        ]),
+      ])
+
+      return newItem
+    })
+
+    session.flash('success', 'Item created successfully')
+    return response.redirect().withQs().toRoute('listing.item')
   }
 
   async show({ params, inertia, bouncer }: HttpContext) {
@@ -66,36 +107,6 @@ export default class ItemController {
     })
   }
 
-  async store({ request, session, response, bouncer }: HttpContext) {
-    await bouncer.with(ItemPolicy).authorize('create')
-
-    const validatedData = await request.validateUsing(storeItemValidator)
-    await db.transaction(async () => {
-      const newItem = await Item.create({
-        name: validatedData.name,
-        description: validatedData.description,
-        isPhotographedStudio: false,
-      })
-
-      await Promise.all([
-        newItem.related('itemStatus').create({
-          status: ItemStatusType.NORMAL,
-        }),
-        newItem.related('validations').createMany([
-          {
-            type: LocationType.STUDIO,
-            isValidated: false,
-          },
-        ]),
-      ])
-
-      return newItem
-    })
-
-    session.flash('success', 'Item created successfully')
-    return response.redirect().toRoute('listing.item')
-  }
-
   async update({ params, request, session, response, bouncer }: HttpContext) {
     const item = await Item.query()
       .where('id', params.id)
@@ -128,5 +139,37 @@ export default class ItemController {
 
     session.flash('success', 'Item updated successfully')
     return response.redirect().toRoute('listing.item')
+  }
+
+  async destroy({ params, response, session, bouncer }: HttpContext) {
+    const item = await Item.query().where('id', params.id).firstOrFail()
+
+    await bouncer.with(ItemPolicy).authorize('delete')
+
+    await item.delete()
+
+    session.flash('success', 'Item deleted successfully')
+    return response.redirect().withQs().back()
+  }
+
+  async validateStudioPhoto({ params, auth, response, session }: HttpContext) {
+    const item = await Item.query().where('id', params.id).preload('validations').firstOrFail()
+
+    if (!item.isPhotographedStudio) {
+      session.flash('errors', 'Item must be photographed before validation')
+      return response.redirect().back()
+    }
+
+    await item.related('validations').updateOrCreate(
+      { type: LocationType.STUDIO },
+      {
+        isValidated: true,
+        userId: auth.user?.id,
+        validatedAt: DateTime.now(),
+      }
+    )
+
+    session.flash('success', 'Item validated successfully')
+    response.redirect().withQs().back()
   }
 }

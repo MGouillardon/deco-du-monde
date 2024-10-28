@@ -1,9 +1,14 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
+import { Link } from '@inertiajs/vue3'
 import ListingTable from '@/components/ListingTable.vue'
 
 const props = defineProps({
   items: {
+    type: Object,
+    required: true,
+  },
+  locationType: {
     type: Object,
     required: true,
   },
@@ -77,7 +82,10 @@ const itemsNeedingStudioPhoto = computed(() =>
 )
 
 const itemsNeedingValidation = computed(() =>
-  props.items.data.filter((item) => item.isPhotographedStudio && !item.validations.isValidated)
+  props.items.data.filter((item) => {
+    const studioValidation = item.validations.find(v => v.type === props.locationType.STUDIO)
+    return item.isPhotographedStudio && (!studioValidation || !studioValidation.isValidated)
+  })
 )
 
 const itemsNeedingInSituPhoto = computed(() =>
@@ -85,8 +93,6 @@ const itemsNeedingInSituPhoto = computed(() =>
 )
 
 const eventStudioPhoto = (item) => {}
-
-const validatePhoto = (item) => {}
 
 const assignToSet = (item) => {}
 </script>
@@ -128,7 +134,15 @@ const assignToSet = (item) => {}
             class="flex justify-between items-center mb-2"
           >
             <span>{{ item.name }}</span>
-            <button @click="validatePhoto(item)" class="btn btn-sm btn-accent">Validate</button>
+            <Link
+              class="btn btn-sm btn-accent"
+              :href="`/admin/dashboard/items/validate/${item.id}`"
+              method="POST"
+              as="button"
+              preserve-scroll
+            >
+              Validate
+            </Link>
           </li>
         </ul>
       </div>
