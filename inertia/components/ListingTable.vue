@@ -37,6 +37,8 @@ const props = defineProps({
   },
 })
 
+const hasCreateLink = computed(() => !!props.createLink)
+
 const { showDeleteModal, itemToDelete, openDeleteModal, closeDeleteModal, confirmDelete } =
   useDeleteModal(props.deleteRoute)
 
@@ -54,7 +56,7 @@ const itemDisplayName = computed(() => {
 <template>
   <div class="flex justify-between items-center mb-4">
     <Pagination :current-page="items.meta.currentPage" :last-page="items.meta.lastPage" />
-    <Link class="btn btn-primary btn-sm" :href="createLink">{{ createLabel }}</Link>
+    <Link v-if="hasCreateLink" class="btn btn-primary btn-sm" :href="createLink">{{ createLabel }}</Link>
   </div>
   <Table
     :items="items.data"

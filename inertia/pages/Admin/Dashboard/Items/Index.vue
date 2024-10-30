@@ -12,6 +12,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  can: {
+    type: Object,
+    required: true,
+  },
 })
 
 const columns = [
@@ -23,23 +27,33 @@ const columns = [
   { key: 'setsCount', label: 'Sets' },
 ]
 
-const actions = [
-  {
+const actions = computed(() => {
+  const allowedActions = []
+  
+  allowedActions.push({
     label: 'View',
     link: (item) => `/admin/dashboard/items/show/${item.id}`,
     class: 'btn-secondary',
-  },
-  {
-    label: 'Edit',
-    link: (item) => `/admin/dashboard/items/edit/${item.id}`,
-    class: 'btn-primary',
-  },
-  {
-    label: 'Delete',
-    event: 'delete',
-    class: 'btn-error',
-  },
-]
+  })
+
+  if (props.can.update) {
+    allowedActions.push({
+      label: 'Edit',
+      link: (item) => `/admin/dashboard/items/edit/${item.id}`,
+      class: 'btn-primary',
+    })
+  }
+
+  if (props.can.delete) {
+    allowedActions.push({
+      label: 'Delete',
+      event: 'delete',
+      class: 'btn-error',
+    })
+  }
+
+  return allowedActions
+})
 
 const BADGE_CLASSES = {
   SUCCESS: 'badge badge-success',
@@ -83,7 +97,7 @@ const itemsNeedingStudioPhoto = computed(() =>
 
 const itemsNeedingValidation = computed(() =>
   props.items.data.filter((item) => {
-    const studioValidation = item.validations.find(v => v.type === props.locationType.STUDIO)
+    const studioValidation = item.validations.find((v) => v.type === props.locationType.STUDIO)
     return item.isPhotographedStudio && (!studioValidation || !studioValidation.isValidated)
   })
 )
@@ -102,13 +116,13 @@ const assignToSet = (item) => {}
     :items="formattedItems"
     :columns="columns"
     :actions="actions"
-    create-link="/admin/dashboard/items/create"
+    :create-link="can.create ? '/admin/dashboard/items/create' : null"
     create-label="Create an Item"
     delete-route="/admin/dashboard/items/delete"
   />
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-    <div class="card bg-base-100 shadow-xl">
+    <div v-if="can.update" class="card bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title">Items Needing Studio Photo</h2>
         <ul>
@@ -124,7 +138,7 @@ const assignToSet = (item) => {}
       </div>
     </div>
 
-    <div class="card bg-base-100 shadow-xl">
+    <div v-if="can.validateStudioPhoto" class="card bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title">Items Needing Validation</h2>
         <ul>
@@ -148,7 +162,7 @@ const assignToSet = (item) => {}
       </div>
     </div>
 
-    <div class="card bg-base-100 shadow-xl">
+    <div v-if="can.update" class="card bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title">Items Needing In Situ Photo</h2>
         <ul>
