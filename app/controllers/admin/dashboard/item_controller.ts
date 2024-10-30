@@ -24,6 +24,12 @@ export default class ItemController {
       title: 'Listing items',
       items,
       locationType: LocationType,
+      can: {
+        create: await bouncer.with(ItemPolicy).allows('create'),
+        update: await bouncer.with(ItemPolicy).allows('update'),
+        delete: await bouncer.with(ItemPolicy).allows('delete'),
+        validateStudioPhoto: await bouncer.with(ItemPolicy).allows('validateStudioPhoto'),
+      },
     })
   }
 
@@ -152,7 +158,9 @@ export default class ItemController {
     return response.redirect().withQs().back()
   }
 
-  async validateStudioPhoto({ params, auth, response, session }: HttpContext) {
+  async validateStudioPhoto({ params, auth, response, session, bouncer }: HttpContext) {
+    await bouncer.with(ItemPolicy).authorize('validateStudioPhoto')
+
     const item = await Item.query().where('id', params.id).preload('validations').firstOrFail()
 
     if (!item.isPhotographedStudio) {
