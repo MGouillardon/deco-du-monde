@@ -1,29 +1,37 @@
 import { BasePolicy } from '@adonisjs/bouncer'
 import User from '#models/user'
 import Roles from '#enums/roles'
+import type { AuthorizerResponse } from '@adonisjs/bouncer/types'
 
 export default class ItemPolicy extends BasePolicy {
-  private isAdminOrPhotograph(user: User) {
-    return user.roleId === Roles.ADMIN || user.roleId === Roles.PHOTOGRAPH
+  before(user: User | null): AuthorizerResponse | undefined {
+    if (user?.roleId === Roles.ADMIN) {
+      return true
+    }
+    return undefined
   }
 
-  async viewAny() {
+  viewAny(_user: User): AuthorizerResponse {
     return true
   }
 
-  async create(user: User) {
-    return this.isAdminOrPhotograph(user)
-  }
-
-  async view() {
+  view(_user: User): AuthorizerResponse {
     return true
   }
 
-  async update(user: User) {
-    return this.isAdminOrPhotograph(user)
+  create(user: User): AuthorizerResponse {
+    return user.roleId === Roles.PHOTOGRAPH
   }
 
-  async delete(user: User) {
-    return user.roleId === Roles.ADMIN
+  update(user: User): AuthorizerResponse {
+    return user.roleId === Roles.PHOTOGRAPH
+  }
+
+  delete(_user: User): AuthorizerResponse {
+    return false
+  }
+
+  validateStudioPhoto(user: User): AuthorizerResponse {
+    return user.roleId === Roles.PHOTOGRAPH
   }
 }
