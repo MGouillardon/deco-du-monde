@@ -3,6 +3,8 @@ import { inject } from '@adonisjs/core'
 import { EventService } from '#services/event_service'
 import { storeEventValidator } from '#validators/dashboard/event/store'
 import { updateEventValidator } from '#validators/dashboard/event/update'
+import db from '@adonisjs/lucid/services/db'
+import Event from '#models/event'
 
 @inject()
 export default class EventController {
@@ -69,5 +71,16 @@ export default class EventController {
     await this.eventService.deleteEvent(params.id)
     session.flash('success', 'Event deleted successfully')
     return response.redirect().toRoute('index.event')
+  }
+
+  async complete({ params, response, session }: HttpContext) {
+    const event = await Event.query().where('id', params.id).preload('item').firstOrFail()
+
+    await db.transaction(async (trx) => {
+      await event.complete(trx)
+    })
+
+    session.flash('success', 'Event marked as completed')
+    return response.redirect().back()
   }
 }

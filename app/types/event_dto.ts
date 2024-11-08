@@ -8,6 +8,8 @@ export interface EventDTO {
   location: string
   locationId: number
   type: EventType
+  completed: boolean
+  completedAt: string | null
   itemId?: number | null
   itemName?: string | null
   setId?: number | null

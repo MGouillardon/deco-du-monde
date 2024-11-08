@@ -140,6 +140,8 @@ export class EventService {
       location: event.location.name,
       locationId: event.locationId,
       type: event.type,
+      completed: event.completed,
+      completedAt: event.completedAt?.toISO() ?? null,
       itemId: event.item?.id,
       itemName: event.item?.name,
       setId: event.set?.id,
