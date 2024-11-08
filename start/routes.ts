@@ -112,6 +112,7 @@ router
     router.get('/edit/:id', [EventController, 'edit']).as('edit.event')
     router.put('/update/:id', [EventController, 'update']).as('update.event')
     router.put('/update/:id/dates', [EventController, 'updateEventDates']).as('update.event.dates')
+    router.post('/:id/complete', [EventController, 'complete']).as('complete.event')
     router.delete('/delete/:id', [EventController, 'destroy']).as('delete.event')
   })
   .prefix('admin/dashboard/events')
