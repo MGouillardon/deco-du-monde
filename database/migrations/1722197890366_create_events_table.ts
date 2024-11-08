@@ -16,6 +16,8 @@ export default class extends BaseSchema {
       table.dateTime('start_time').notNullable()
       table.dateTime('end_time').notNullable()
       table.enum('type', Object.values(EventType)).notNullable()
+      table.boolean('completed').defaultTo(false)
+      table.timestamp('completed_at').nullable()
       table
         .integer('set_id')
         .unsigned()
