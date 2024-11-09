@@ -34,4 +34,13 @@ export default class Item extends BaseModel {
     pivotTable: 'item_sets',
   })
   declare sets: ManyToMany<typeof Set>
+
+  static getDetailedQuery() {
+    return this.query()
+      .preload('itemStatus')
+      .preload('validations', (query) => {
+        query.preload('user')
+      })
+      .preload('sets')
+  }
 }

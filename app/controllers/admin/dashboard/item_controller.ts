@@ -12,13 +12,8 @@ import { DateTime } from 'luxon'
 export default class ItemController {
   async index({ request, inertia, bouncer }: HttpContext) {
     await bouncer.with(ItemPolicy).authorize('viewAny')
-
     const page = request.input('page', 1)
-    const items = await Item.query()
-      .preload('itemStatus')
-      .preload('validations')
-      .preload('sets')
-      .paginate(page, 10)
+    const items = await Item.getDetailedQuery().paginate(page, 10)
 
     return inertia.render('Admin/Dashboard/Items/Index', {
       title: 'Listing items',
@@ -73,16 +68,8 @@ export default class ItemController {
   }
 
   async show({ params, inertia, bouncer }: HttpContext) {
-    const item = await Item.query()
-      .where('id', params.id)
-      .preload('itemStatus')
-      .preload('validations', (query) => {
-        query.preload('user')
-      })
-      .preload('sets')
-      .firstOrFail()
-
     await bouncer.with(ItemPolicy).authorize('view')
+    const item = await Item.getDetailedQuery().where('id', params.id).firstOrFail()
 
     return inertia.render('Admin/Dashboard/Items/Show', {
       title: `Show item: ${item.name}`,
@@ -91,19 +78,11 @@ export default class ItemController {
   }
 
   async edit({ params, inertia, bouncer }: HttpContext) {
+    await bouncer.with(ItemPolicy).authorize('update')
     const [item, allSets] = await Promise.all([
-      Item.query()
-        .where('id', params.id)
-        .preload('itemStatus')
-        .preload('validations', (query) => {
-          query.preload('user')
-        })
-        .preload('sets')
-        .firstOrFail(),
+      Item.getDetailedQuery().where('id', params.id).firstOrFail(),
       Set.query().select('id', 'name').orderBy('name'),
     ])
-
-    await bouncer.with(ItemPolicy).authorize('update')
 
     return inertia.render('Admin/Dashboard/Items/Edit', {
       title: `Edit item: ${item.name}`,
