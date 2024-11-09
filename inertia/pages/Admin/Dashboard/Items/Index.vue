@@ -2,6 +2,9 @@
 import { ref, computed } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import ListingTable from '@/components/ListingTable.vue'
+import { useStatusBadges } from '@/composables/useStatusBadges'
+
+const { formatBadge, STATUS_CLASSES } = useStatusBadges()
 
 const props = defineProps({
   items: {
@@ -29,7 +32,7 @@ const columns = [
 
 const actions = computed(() => {
   const allowedActions = []
-  
+
   allowedActions.push({
     label: 'View',
     link: (item) => `/admin/dashboard/items/show/${item.id}`,
@@ -55,25 +58,6 @@ const actions = computed(() => {
   return allowedActions
 })
 
-const BADGE_CLASSES = {
-  SUCCESS: 'badge badge-success',
-  ERROR: 'badge badge-error',
-  INFO: 'badge badge-info',
-  GHOST: 'badge badge-ghost',
-  WARNING: 'badge badge-warning',
-}
-
-const STATUS_CLASSES = {
-  normal: BADGE_CLASSES.INFO,
-  damaged: BADGE_CLASSES.WARNING,
-  lost: BADGE_CLASSES.ERROR,
-}
-
-const formatBadge = (condition, trueValue, falseValue) => ({
-  value: condition ? trueValue : falseValue,
-  class: condition ? BADGE_CLASSES.SUCCESS : BADGE_CLASSES.ERROR,
-})
-
 const formatItem = (item) => ({
   ...item,
   isPhotographedStudio: formatBadge(item.isPhotographedStudio, 'Yes', 'No'),
@@ -82,7 +66,7 @@ const formatItem = (item) => ({
   setsCount: item.sets.length,
   status: {
     value: item.itemStatus?.status ?? '',
-    class: STATUS_CLASSES[item.itemStatus?.status] ?? BADGE_CLASSES.INFO,
+    class: STATUS_CLASSES[item.itemStatus?.status] ?? 'badge badge-info',
   },
 })
 
