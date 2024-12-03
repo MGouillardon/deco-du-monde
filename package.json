@@ -84,6 +84,7 @@
     "@fullcalendar/timegrid": "^6.1.15",
     "@fullcalendar/vue3": "^6.1.15",
     "@inertiajs/vue3": "^1.2.0",
+    "@julr/adonisjs-prometheus": "^1.0.1",
     "@vinejs/vine": "^2.1.0",
     "edge.js": "^6.0.2",
     "luxon": "^3.4.4",
