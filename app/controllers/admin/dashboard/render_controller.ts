@@ -4,6 +4,7 @@ import { DashboardStatsService } from '#services/dashboard/widgets/stats_service
 import { RecentActivityService } from '#services/dashboard/widgets/recent_activity_service'
 import { UpcomingEventService } from '#services/dashboard/widgets/upcoming_event_service'
 import { StatusOverviewService } from '#services/dashboard/widgets/status_overview_service'
+import DashboardPolicy from '#policies/dashboard_policy'
 
 @inject()
 export default class RenderController {
@@ -14,7 +15,9 @@ export default class RenderController {
     private statusOverviewService: StatusOverviewService
   ) {}
 
-  async handle({ inertia }: HttpContext) {
+  async handle({ inertia, bouncer }: HttpContext) {
+    await bouncer.with(DashboardPolicy).authorize('viewDashboard')
+
     try {
       const [stats, recentActivity, upcomingEvents, statusOverview] = await Promise.all([
         this.dashboardStatsService.getStats(),
