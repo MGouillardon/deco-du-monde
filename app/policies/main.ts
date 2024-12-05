@@ -12,4 +12,8 @@
 |
 */
 
-export const policies = {}
+export const policies = {
+  UserPolicy: () => import('#policies/user_policy'),
+  EventPolicy: () => import('#policies/event_policy'),
+  SetPolicy: () => import('#policies/set_policy')
+}
