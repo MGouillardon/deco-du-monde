@@ -13,6 +13,7 @@
 */
 
 export const policies = {
+  DashboardPolicy: () => import('#policies/dashboard_policy'),
   UserPolicy: () => import('#policies/user_policy'),
   EventPolicy: () => import('#policies/event_policy'),
   SetPolicy: () => import('#policies/set_policy')
