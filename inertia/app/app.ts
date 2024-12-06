@@ -14,7 +14,11 @@ createInertiaApp({
   resolve: (name) => {
     const pages = import.meta.glob<DefineComponent>('../pages/**/*.vue', { eager: true })
     let page = pages[`../pages/${name}.vue`]
-    if (name !== 'Admin/Auth/Login' && name !== 'Admin/Auth/ResetPassword') {
+    if (
+      name !== 'Admin/Auth/Login' &&
+      name !== 'Admin/Auth/ResetPassword' &&
+      !name.startsWith('errors/')
+    ) {
       page.default.layout = page.default.layout || DefaultLayout
     }
     return page
