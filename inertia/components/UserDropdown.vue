@@ -12,11 +12,14 @@ const props = defineProps({
 })
 
 const userInitial = computed(() => {
-  return props.user.fullName
-    .split(' ')
-    .map((name) => name.charAt(0))
-    .join('')
-    .toUpperCase()
+  if (props.user && props.user.$attributes && props.user.$attributes.fullName) {
+    return props.user.$attributes.fullName
+      .split(' ')
+      .map((name) => name.charAt(0))
+      .join('')
+      .toUpperCase()
+  }
+  return ''
 })
 </script>
 
