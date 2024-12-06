@@ -67,7 +67,7 @@ const updateProfile = () => {
             <input type="text" :value="user.roleName" class="input input-bordered" disabled />
           </div>
           <div class="card-actions justify-end mt-6">
-            <button type="submit" class="btn btn-primary" :disabled="form.processing">
+            <button type="submit" class="btn btn-primary btn-block" :disabled="form.processing">
               {{ form.processing ? 'Updating...' : 'Update Profile' }}
             </button>
           </div>
@@ -81,7 +81,7 @@ const updateProfile = () => {
         <div class="card-actions">
           <button
             @click="requestPasswordReset"
-            class="btn btn-secondary btn-block"
+            class="btn btn-primary btn-block"
             :disabled="resetForm.processing"
           >
             <PasswordIcon />

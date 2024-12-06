@@ -129,7 +129,7 @@ const goBack = () => {
     </div>
   </div>
   <div class="mt-4 space-x-2">
-    <button class="btn btn-neutral" @click="goBack">Back to List</button>
-    <Link :href="`/admin/dashboard/items/edit/${item.id}`" class="btn btn-primary">Edit Item</Link>
+    <button class="btn btn-neutral btn-sm" @click="goBack">Back to List</button>
+    <Link :href="`/admin/dashboard/items/edit/${item.id}`" class="btn btn-primary btn-sm">Edit Item</Link>
   </div>
 </template>

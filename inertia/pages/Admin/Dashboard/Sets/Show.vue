@@ -106,7 +106,7 @@ const capitalizeFirstLetter = (text) => {
     </div>
   </div>
   <div class="mt-4 space-x-2">
-    <Link href="/admin/dashboard/sets" class="btn btn-neutral">Back to List</Link>
-    <Link :href="`/admin/dashboard/sets/edit/${set.id}`" class="btn btn-primary">Edit Set</Link>
+    <Link href="/admin/dashboard/sets" class="btn btn-neutral btn-sm">Back to List</Link>
+    <Link :href="`/admin/dashboard/sets/edit/${set.id}`" class="btn btn-primary btn-sm">Edit Set</Link>
   </div>
 </template>
