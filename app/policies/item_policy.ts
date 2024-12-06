@@ -32,6 +32,6 @@ export default class ItemPolicy extends BasePolicy {
   }
 
   validateStudioPhoto(user: User): AuthorizerResponse {
-    return user.roleId === Roles.PHOTOGRAPH
+    return [Roles.PHOTOGRAPH, Roles.ASSISTANT_PHOTOGRAPH].includes(user.roleId)
   }
 }
