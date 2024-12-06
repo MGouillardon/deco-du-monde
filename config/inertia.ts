@@ -20,8 +20,10 @@ const inertiaConfig = defineConfig({
 
       const authService = await ctx.containerResolver.make(AuthorizationService)
       return {
-        ...user,
-        can: authService.getUserPermissions(user),
+        user: {
+          ...user.serialize(),
+          can: authService.getUserPermissions(user),
+        },
       }
     },
     errors: (ctx) => ctx.session?.flashMessages.get('errors'),
