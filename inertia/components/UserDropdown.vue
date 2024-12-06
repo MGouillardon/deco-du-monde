@@ -1,19 +1,14 @@
 <script setup>
-import { Link } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import UserIcon from '@/components/icons/UserIcon.vue'
 import LogoutIcon from '@/components/icons/LogoutIcon.vue'
 
-const props = defineProps({
-  user: {
-    type: Object,
-    required: true,
-  },
-})
+const auth = usePage().props.auth
 
 const userInitial = computed(() => {
-  if (props.user && props.user.$attributes && props.user.$attributes.fullName) {
-    return props.user.$attributes.fullName
+  if (auth?.user?.fullName) {
+    return auth.user.fullName
       .split(' ')
       .map((name) => name.charAt(0))
       .join('')
@@ -21,6 +16,7 @@ const userInitial = computed(() => {
   }
   return ''
 })
+
 </script>
 
 <template>
@@ -35,7 +31,7 @@ const userInitial = computed(() => {
       class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-5 w-52 p-2 shadow"
     >
       <li>
-        <Link :href="`/admin/dashboard/profile/${user.id}`"><UserIcon />Profile</Link>
+        <Link :href="`/admin/dashboard/profile/${auth.user.id}`"><UserIcon />Profile</Link>
       </li>
       <li>
         <Link href="/admin/logout" method="delete" as="button" type="button"
