@@ -1,6 +1,6 @@
 import { defineConfig } from '@adonisjs/inertia'
 import type { InferSharedProps } from '@adonisjs/inertia/types'
-import Roles from '#enums/roles'
+import AuthorizationService from '#services/authorization_service'
 
 const inertiaConfig = defineConfig({
   /**
@@ -12,18 +12,16 @@ const inertiaConfig = defineConfig({
    * Data that should be shared with all rendered pages
    */
   sharedData: {
-    auth: (ctx) => {
+    auth: async (ctx) => {
       const user = ctx.auth?.user
-      if (!user) return null
+      if (!user) {
+        return null
+      }
 
+      const authService = await ctx.containerResolver.make(AuthorizationService)
       return {
         ...user,
-        can: {
-          viewDashboard: [Roles.ADMIN, Roles.PHOTOGRAPH, Roles.DECORATOR].includes(user.roleId),
-          viewUsers: user.roleId === Roles.ADMIN,
-          viewWork: [Roles.ADMIN, Roles.PHOTOGRAPH, Roles.DECORATOR].includes(user.roleId),
-          viewReports: [Roles.ADMIN, Roles.PHOTOGRAPH, Roles.DECORATOR].includes(user.roleId),
-        },
+        can: authService.getUserPermissions(user),
       }
     },
     errors: (ctx) => ctx.session?.flashMessages.get('errors'),
