@@ -41,6 +41,12 @@ router
 router
   .group(() => {
     router.get('/dashboard', [RenderController]).as('dashboard')
+  })
+  .prefix('admin')
+  .use([middleware.auth(), middleware.role(['ADMIN', 'PHOTOGRAPH', 'DECORATOR'])])
+
+router
+  .group(() => {
     router.get('/dashboard/profile/:id', [ProfileController, 'show']).as('profile.show')
     router.put('/dashboard/profile/update/:id', [ProfileController, 'update']).as('profile.update')
     router
@@ -52,7 +58,7 @@ router
     router.delete('/logout', [LogoutController]).as('logout')
   })
   .prefix('admin')
-  .use(middleware.auth())
+  .use([middleware.auth(), middleware.role(['ALL'])])
 
 router
   .group(() => {
@@ -67,7 +73,7 @@ router
     router.delete('/delete/:id', [UsersController, 'destroy']).as('delete.user')
   })
   .prefix('admin/dashboard/users')
-  .use(middleware.auth())
+  .use([middleware.auth(), middleware.role(['ADMIN'])])
 
 router
   .group(() => {
@@ -84,7 +90,7 @@ router
     router.post('/validate/:id', [ItemController, 'validateStudioPhoto']).as('validate.item')
   })
   .prefix('admin/dashboard/items')
-  .use(middleware.auth())
+  .use([middleware.auth(), middleware.role(['ADMIN', 'PHOTOGRAPH', 'ASSISTANT_PHOTOGRAPH'])])
 
 router
   .group(() => {
@@ -98,7 +104,16 @@ router
     router.delete('/delete/:id', [SetController, 'destroy']).as('delete.set')
   })
   .prefix('admin/dashboard/sets')
-  .use(middleware.auth())
+  .use([
+    middleware.auth(),
+    middleware.role([
+      'ADMIN',
+      'DECORATOR',
+      'ASSISTANT_DECORATOR',
+      'PHOTOGRAPH',
+      'ASSISTANT_PHOTOGRAPH',
+    ]),
+  ])
 
 router
   .group(() => {
@@ -116,4 +131,4 @@ router
     router.delete('/delete/:id', [EventController, 'destroy']).as('delete.event')
   })
   .prefix('admin/dashboard/events')
-  .use(middleware.auth())
+  .use([middleware.auth(), middleware.role(['ALL'])])
