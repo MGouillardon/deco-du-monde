@@ -35,7 +35,7 @@ export const plugins: Config['plugins'] = [
  * The teardown functions are executer after all the tests
  */
 export const runnerHooks: Required<Pick<Config, 'setup' | 'teardown'>> = {
-  setup: [],
+  setup: [() => testUtils.db().truncate(), () => testUtils.db().seed()],
   teardown: [],
 }
 
@@ -46,5 +46,9 @@ export const runnerHooks: Required<Pick<Config, 'setup' | 'teardown'>> = {
 export const configureSuite: Config['configureSuite'] = (suite) => {
   if (['browser', 'functional', 'e2e'].includes(suite.name)) {
     return suite.setup(() => testUtils.httpServer().start())
+  }
+
+  if (suite.name === 'unit') {
+    return suite.setup(() => testUtils.db().withGlobalTransaction())
   }
 }
