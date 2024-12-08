@@ -2,15 +2,9 @@ import { test } from '@japa/runner'
 import { createAdminUser, createTestUser } from '../users/helpers/setup.js'
 import { createBasicItem } from './helpers/setup.js'
 import Roles from '#enums/roles'
-import Database from '@adonisjs/lucid/services/db'
 import Item from '#models/item'
 
-test.group('Items delete', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction()
-    return () => Database.rollbackGlobalTransaction()
-  })
-
+test.group('Items delete', () => {
   test('admin can delete item', async ({ client, route, assert }) => {
     const admin = await createAdminUser()
     const item = await createBasicItem()

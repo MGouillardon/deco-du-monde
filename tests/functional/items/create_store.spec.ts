@@ -5,14 +5,8 @@ import Roles from '#enums/roles'
 import { ItemStatusType } from '#enums/item_status'
 import { LocationType } from '#enums/location_type'
 import Item from '#models/item'
-import Database from '@adonisjs/lucid/services/db'
 
-test.group('Items create/store', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction()
-    return () => Database.rollbackGlobalTransaction()
-  })
-
+test.group('Items create/store', () => {
   test('admin can access create form', async ({ client, route }) => {
     const admin = await createAdminUser()
 

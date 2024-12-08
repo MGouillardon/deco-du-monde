@@ -2,14 +2,8 @@ import { test } from '@japa/runner'
 import { createAdminUser, createTestUser } from '../users/helpers/setup.js'
 import { createBasicSet } from './helpers/setup.js'
 import Roles from '#enums/roles'
-import Database from '@adonisjs/lucid/services/db'
 
 test.group('Sets index', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction()
-    return () => Database.rollbackGlobalTransaction()
-  })
-
   test('admin can view sets listing', async ({ client, route }) => {
     const admin = await createAdminUser()
     await createBasicSet()

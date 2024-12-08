@@ -3,14 +3,8 @@ import { createTestUser } from '../users/helpers/setup.js'
 import { createBasicItem } from './helpers/setup.js'
 import Roles from '#enums/roles'
 import { LocationType } from '#enums/location_type'
-import Database from '@adonisjs/lucid/services/db'
 
-test.group('Items validate studio photo', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction()
-    return () => Database.rollbackGlobalTransaction()
-  })
-
+test.group('Items validate studio photo', () => {
   test('photographer can validate studio photo when photographed', async ({
     client,
     route,

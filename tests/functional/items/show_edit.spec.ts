@@ -3,14 +3,8 @@ import { createAdminUser, createTestUser } from '../users/helpers/setup.js'
 import { createBasicItem } from './helpers/setup.js'
 import Roles from '#enums/roles'
 import { ItemStatusType } from '#enums/item_status'
-import Database from '@adonisjs/lucid/services/db'
 
-test.group('Items show/edit', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction()
-    return () => Database.rollbackGlobalTransaction()
-  })
-
+test.group('Items show/edit', () => {
   test('admin can view item details', async ({ client, route }) => {
     const admin = await createAdminUser()
     const item = await createBasicItem()

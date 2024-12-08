@@ -3,14 +3,8 @@ import { createAdminUser, createTestUser } from '../users/helpers/setup.js'
 import { createBasicItem, testItemData } from './helpers/setup.js'
 import Roles from '#enums/roles'
 import { ItemStatusType } from '#enums/item_status'
-import Database from '@adonisjs/lucid/services/db'
 
-test.group('Items update', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction()
-    return () => Database.rollbackGlobalTransaction()
-  })
-
+test.group('Items update', () => {
   test('admin can update item', async ({ client, route, assert }) => {
     const admin = await createAdminUser()
     const item = await createBasicItem()
@@ -48,15 +42,20 @@ test.group('Items update', (group) => {
     const photographer = await createTestUser(Roles.PHOTOGRAPH)
     const item = await createBasicItem()
 
+    const updateData = {
+      ...testItemData,
+      name: 'Updated Name',
+      description: 'Updated Description',
+      status: ItemStatusType.STUDIO_SCHEDULED,
+      notes: 'Test notes',
+    }
+
     const response = await client
       .put(route('update.item', [item.id]))
       .withCsrfToken()
       .withInertia()
       .loginAs(photographer)
-      .form({
-        ...testItemData,
-        name: 'Photographer Update',
-      })
+      .form(updateData)
 
     response.assertStatus(200)
     response.assertInertiaPropsContains({
