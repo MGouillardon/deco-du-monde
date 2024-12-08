@@ -11,10 +11,10 @@ import EventPolicy from '#policies/event_policy'
 export default class EventController {
   constructor(private eventService: EventService) {}
 
-  async index({ inertia, bouncer }: HttpContext) {
+  async index({ inertia, bouncer, auth }: HttpContext) {
     await bouncer.with(EventPolicy).authorize('viewAny')
 
-    const events = await this.eventService.fetchAllEvents()
+    const events = await this.eventService.fetchAllEvents(auth.user!)
     return inertia.render('Admin/Dashboard/Events/Index', {
       title: 'Calendar',
       events,
