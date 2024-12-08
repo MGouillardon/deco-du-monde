@@ -104,4 +104,24 @@ test.group('Items create/store', (group) => {
 
     response.assertStatus(403)
   })
+
+  test('validates required fields', async ({ client, route, assert }) => {
+    const admin = await createAdminUser()
+
+    const response = await client
+      .post(route('store.item'))
+      .withCsrfToken()
+      .withInertia()
+      .loginAs(admin)
+      .form({})
+      .header('Referer', route('listing.item'))
+
+    response.assertStatus(200)
+    assert.exists(response.inertiaProps.errors)
+    assert.exists(response.inertiaProps.errors.name, 'Name validation error should exist')
+    assert.exists(
+      response.inertiaProps.errors.description,
+      'Description validation error should exist'
+    )
+  })
 })
