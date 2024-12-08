@@ -7,6 +7,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  can: {
+    type: Object,
+    required: true,
+  },
 })
 </script>
 
@@ -14,10 +18,10 @@ const props = defineProps({
   <div class="card bg-base-100 shadow-xl">
     <div class="card-body">
       <div class="flex justify-end gap-2">
-        <Link :href="`/admin/dashboard/events/edit/${event.id}`" class="btn btn-primary btn-sm"
+        <Link v-if="props.can.update" :href="`/admin/dashboard/events/edit/${event.id}`" class="btn btn-primary btn-sm"
           >Edit Event</Link
         >
-        <Link
+        <Link v-if="props.can.delete"
           :href="`/admin/dashboard/events/delete/${event.id}`"
           method="delete"
           as="button"

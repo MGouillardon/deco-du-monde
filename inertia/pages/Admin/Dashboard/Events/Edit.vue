@@ -146,7 +146,6 @@ const eventStatus = computed(() => {
 </script>
 
 <template>
-  {{ event.startTime }}
   <div class="flex justify-between items-center mb-6">
     <div class="flex items-center gap-4">
       <span :class="['badge', eventStatus.class]">{{ eventStatus.label }}</span>
