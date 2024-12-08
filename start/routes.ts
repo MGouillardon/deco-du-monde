@@ -90,7 +90,16 @@ router
     router.post('/validate/:id', [ItemController, 'validateStudioPhoto']).as('validate.item')
   })
   .prefix('admin/dashboard/items')
-  .use([middleware.auth(), middleware.role(['ADMIN', 'PHOTOGRAPH', 'ASSISTANT_PHOTOGRAPH'])])
+  .use([
+    middleware.auth(),
+    middleware.role([
+      'ADMIN',
+      'PHOTOGRAPH',
+      'ASSISTANT_PHOTOGRAPH',
+      'DECORATOR',
+      'ASSISTANT_DECORATOR',
+    ]),
+  ])
 
 router
   .group(() => {
