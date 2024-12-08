@@ -7,11 +7,19 @@ import Location from '#models/location'
 import Set from '#models/set'
 import Item from '#models/item'
 import type { EventDTO } from '#types/event_dto'
+import Roles from '#enums/roles'
 
 export class EventService {
-  async fetchAllEvents(): Promise<EventDTO[]> {
-    const events = await Event.query().withScopes((scope) => scope.withDetails())
+  async fetchAllEvents(user?: User): Promise<EventDTO[]> {
+    const query = Event.query().withScopes((scope) => scope.withDetails())
 
+    if (user && user.roleId !== Roles.ADMIN) {
+      query.whereHas('eventAssignments', (subQuery) => {
+        subQuery.where('userId', user.id)
+      })
+    }
+
+    const events = await query
     return events.map(this.mapEventToDTO)
   }
 
