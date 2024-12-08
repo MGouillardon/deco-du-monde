@@ -13,7 +13,7 @@ test.group('Items update', () => {
       ...testItemData,
       name: 'Updated Name',
       description: 'Updated Description',
-      status: ItemStatusType.STUDIO_SCHEDULED,
+      status: ItemStatusType.DAMAGED,
       notes: 'Test notes',
     }
 
@@ -46,7 +46,7 @@ test.group('Items update', () => {
       ...testItemData,
       name: 'Updated Name',
       description: 'Updated Description',
-      status: ItemStatusType.STUDIO_SCHEDULED,
+      status: ItemStatusType.DAMAGED,
       notes: 'Test notes',
     }
 
