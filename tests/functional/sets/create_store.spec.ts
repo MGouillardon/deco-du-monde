@@ -4,7 +4,6 @@ import { testSetData } from './helpers/setup.js'
 import Roles from '#enums/roles'
 import Set from '#models/set'
 import Item from '#models/item'
-import { SetValidationType } from '#enums/set_validation_type'
 
 test.group('Sets create/store', () => {
   test('admin can access create form', async ({ client, route }) => {

@@ -3,7 +3,7 @@ import { createAdminUser, createTestUser } from '../users/helpers/setup.js'
 import { createBasicSet } from './helpers/setup.js'
 import Roles from '#enums/roles'
 
-test.group('Sets index', (group) => {
+test.group('Sets index', () => {
   test('admin can view sets listing', async ({ client, route }) => {
     const admin = await createAdminUser()
     await createBasicSet()
