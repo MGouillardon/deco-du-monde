@@ -27,7 +27,7 @@ export async function createStudioValidatedItem() {
 
   await Promise.all([
     item.related('itemStatus').create({
-      status: ItemStatusType.STUDIO_VALIDATED,
+      status: ItemStatusType.NORMAL,
       notes: null,
     }),
     item.related('validations').create({
