@@ -8,6 +8,7 @@ import { inertiaApiClient } from '@adonisjs/inertia/plugins/api_client'
 import { authApiClient } from '@adonisjs/auth/plugins/api_client'
 import { shieldApiClient } from '@adonisjs/shield/plugins/api_client'
 import { sessionApiClient } from '@adonisjs/session/plugins/api_client'
+import { browserClient } from '@japa/browser-client'
 
 /**
  * This file is imported by the "bin/test.ts" entrypoint file
@@ -25,6 +26,9 @@ export const plugins: Config['plugins'] = [
   sessionApiClient(app),
   inertiaApiClient(app),
   shieldApiClient(),
+  browserClient({
+    runInSuites: ['browser'],
+  }),
 ]
 
 /**
