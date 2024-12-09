@@ -146,7 +146,7 @@ const handleDatesSet = (dateInfo) => {
 <template>
   <div v-if="can.create" class="relative">
     <button
-      class="fixed bottom-4 right-9 w-14 h-14 btn btn-primary rounded-full shadow-xl flex items-center justify-center z-50 group"
+      class="fixed bottom-4 right-9 w-14 h-14 btn btn-primary rounded-full shadow-xl flex items-center justify-center z-20 group"
       @click="() => $inertia.visit('/admin/dashboard/events/create')"
       aria-label="Create Event"
     >
