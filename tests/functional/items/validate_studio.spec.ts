@@ -37,6 +37,7 @@ test.group('Items validate studio photo', () => {
   test('cannot validate non-photographed item', async ({ client, route, assert }) => {
     const photographer = await createTestUser(Roles.PHOTOGRAPH)
     const item = await createBasicItem()
+    await item.merge({ isPhotographedStudio: false }).save()
 
     const response = await client
       .post(route('validate.item', [item.id]))
@@ -47,6 +48,9 @@ test.group('Items validate studio photo', () => {
 
     response.assertStatus(200)
     response.assertRedirectsTo(route('show.item', [item.id]))
+    response.assertInertiaPropsContains({
+      errors: 'Item must be photographed before validation',
+    })
 
     const validation = await item
       .related('validations')
