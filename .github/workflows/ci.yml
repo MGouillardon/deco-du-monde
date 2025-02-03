@@ -1,0 +1,82 @@
+name: Test Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: deco-du-monde-test
+          MYSQL_ROOT_HOST: '%'
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Copy ENV file
+      run: |
+        cp .env.example .env
+        
+    - name: Generate App Key
+      run: node ace generate:key
+
+    - name: Wait for MySQL
+      run: |
+        while ! mysqladmin ping -h"127.0.0.1" -P"3306" -uroot -proot --silent; do
+          sleep 1
+        done
+
+    - name: Run migrations
+      run: node ace migration:run --force
+      env:
+        NODE_ENV: test
+        DB_CONNECTION: mysql
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_USER: root
+        DB_PASSWORD: root
+        DB_DATABASE: deco-du-monde-test
+        SMTP_HOST: localhost
+        SMTP_PORT: 587
+      
+    - name: Run tests
+      run: |
+        node ace test functional
+        node ace test unit
+      env:
+        NODE_ENV: test
+        DB_CONNECTION: mysql
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_USER: root
+        DB_PASSWORD: root
+        DB_DATABASE: deco-du-monde-test
+        SMTP_HOST: localhost
+        SMTP_PORT: 587
+
+    - name: Check code style
+      run: npm run lint
