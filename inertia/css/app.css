@@ -9,3 +9,21 @@ input:-webkit-autofill {
 html {
   scrollbar-gutter: auto !important;
 }
+
+@layer components {
+  .btn {
+    @apply rounded-lg;
+  }
+
+  .input {
+    @apply rounded-lg;
+  }
+
+  .select {
+    @apply rounded-lg;
+  }
+
+  .menu *{
+    @apply rounded-lg;
+  }
+}
