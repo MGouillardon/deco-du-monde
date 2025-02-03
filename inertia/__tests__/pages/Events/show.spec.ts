@@ -40,6 +40,7 @@ describe('Show Event Page', () => {
     return mount(Show, {
       props: {
         event: mockEvent,
+        can: { update: true, delete: true, complete: false },
         ...props,
       },
       global: {
@@ -66,8 +67,9 @@ describe('Show Event Page', () => {
     expect(wrapper.text()).toContain('Formatted assistant')
   })
 
-  it('renders edit and delete buttons', () => {
-    const wrapper = createWrapper()
+  it('renders edit and delete buttons when permissions allow', () => {
+    const wrapper = createWrapper({ can: { update: true, delete: true } })
+
     const editButton = wrapper.find('a[href="/admin/dashboard/events/edit/1"]')
     expect(editButton.exists()).toBe(true)
     expect(editButton.text()).toBe('Edit Event')
@@ -75,6 +77,13 @@ describe('Show Event Page', () => {
     const deleteButton = wrapper.find('button[data-id="1"]')
     expect(deleteButton.exists()).toBe(true)
     expect(deleteButton.text()).toBe('Delete Event')
+  })
+
+  it('does not render edit and delete buttons when permissions are missing', () => {
+    const wrapper = createWrapper({ can: { update: false, delete: false } })
+
+    expect(wrapper.find('a[href="/admin/dashboard/events/edit/1"]').exists()).toBe(false)
+    expect(wrapper.find('button[data-id="1"]').exists()).toBe(false)
   })
 
   it('renders back to calendar button', () => {
